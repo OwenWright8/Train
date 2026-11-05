@@ -871,7 +871,7 @@ function bakeTable(ri){
     for(let px=0;px<Wp;px++){const fx=px/TS-.5,i0=Math.floor(fx);let tx=fx-i0;tx=tx*tx*(3-2*tx);
       const v=lerp(lerp(hAt(i0,j0),hAt(i0+1,j0),tx),lerp(hAt(i0,j0+1),hAt(i0+1,j0+1),tx),ty);
       const w=lerp(lerp(wAt(i0,j0),wAt(i0+1,j0),tx),lerp(wAt(i0,j0+1),wAt(i0+1,j0+1),tx),ty);
-      const k=py*Wp+px,l=Math.floor(v+.5);Lg[k]=l;Wt[k]=w>.5?(w>.8?2:1):(w>.3?3:0);if(l>maxL)maxL=l;}}
+      const k=py*Wp+px;let l=Math.floor(v+.5);if(w>.5){let wl=99;for(const[a1,b1]of[[i0,j0],[i0+1,j0],[i0,j0+1],[i0+1,j0+1]])if(wAt(a1,b1))wl=Math.min(wl,hAt(a1,b1));l=Math.min(l,wl);}Lg[k]=l;Wt[k]=w>.5?(w>.8?2:1):(w>.3?3:0);if(l>maxL)maxL=l;}}
   const pal=RG.lev.map(hexRGB),faces=RG.faces.map(hexRGB),water=hexRGB(RG.water),deep=water.map(v=>v*.84),
     sand=RG.key==='snow'?[214,224,230]:RG.key==='canyon'?[214,170,120]:[206,190,140],fas=hexRGB('#5e4029'),fas2=hexRGB(RG.accent);
   const SH=TS+maxL*LIFT+THICK+4,strips=[];
@@ -1498,10 +1498,10 @@ function openModal(html,init){modalRoot.innerHTML=`<div class="modal-bg">${html}
 function closeModal(){modalRoot.innerHTML='';modalOpen=false;}
 
 // ---- shop ----
-const SHOP={eng:'puffer',color:COLORS[0],cars:['coach','coach'],name:''};
+const SHOP={eng:'puffer',color:COLORS[0],cars:[],name:''};
 function shopCost(){return ENGINES[SHOP.eng].cost+SHOP.cars.reduce((a,c)=>a+CARS[c].cost,0);}
 function openShop(){
-  Snd.init();if(!SHOP.name)SHOP.name=TRAIN_NAMES[(G.trains.length+G.seed)%TRAIN_NAMES.length];
+  Snd.init();SHOP.cars=[];if(!SHOP.name)SHOP.name=TRAIN_NAMES[(G.trains.length+G.seed)%TRAIN_NAMES.length];
   const rows=G.trains.map(t=>{const[s]=statusOf(t);return`<button class="trow" data-tid="${t.id}"><span><b>${esc(t.name)}</b><br><small>${esc(s)} · earned ${fmt(t.profit)}</small></span><span class="th"></span></button>`;}).join('');
   openModal(`<div class="modal card"><div class="mh"><h2>Train Yard</h2><button class="x" data-a="close" aria-label="Close">✕</button></div>
     ${G.trains.length?`<div class="sect">Your trains</div><div class="tlist">${rows}</div>`:''}
