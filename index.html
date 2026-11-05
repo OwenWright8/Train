@@ -2064,11 +2064,10 @@ function openExport(){
   const L=serializeLayout(ED.name),txt=JSON.stringify(L);
   openModal(`<div class="modal card menu"><div class="mh"><h2>Export “${esc(ED.name)}”</h2><button class="x" data-a="close" aria-label="Close">✕</button></div>
     <p class="help">Copy this code to back up your tables or share them. Use them in your own game here, or send the code to have it become the game’s official layout.</p>
-    <textarea id="edExp" rows="5" readonly>${esc(txt)}</textarea><div class="row"><button class="btn" data-a="copy">Copy code</button><button class="btn" data-a="dl">Download file</button></div>
+    <textarea id="edExp" rows="5" readonly>${esc(txt)}</textarea><div class="row"><button class="btn" data-a="copy">Copy code</button></div>
     <div class="sect">My game</div><button class="btn primary" data-a="use">Play these tables in my game</button>${LS.get('pj-active-layout',null)?'<button class="btn" data-a="std">Go back to the standard tables</button>':''}</div>`,m=>{
     const q=s=>m.querySelector(s);q('[data-a=close]').onclick=closeModal;
     q('[data-a=copy]').onclick=()=>{const ta=q('#edExp');ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(e){}if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>toast('Copied.'),()=>{if(!ok)toast('Select the text and copy it.');});else toast(ok?'Copied.':'Select the text and copy it.');};
-    q('[data-a=dl]').onclick=()=>{try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=(ED.name||'tables').replace(/[^\w-]+/g,'_')+'.json';document.body.appendChild(a);a.click();a.remove();}catch(e){errToast('Downloads are blocked here. Copy the code instead.');}};
     q('[data-a=use]').onclick=()=>{const list=validateLayout();if(list.some(i=>i.lv==='err')){closeModal();openChecks();errToast('Fix the problems first.');return;}LS.set('pj-active-layout',L);LS.del(SAVE_KEY);toast('Your next game will use these tables.','big',3);closeModal();};
     const s=q('[data-a=std]');if(s)s.onclick=()=>{LS.del('pj-active-layout');LS.del(SAVE_KEY);toast('Back to the standard tables for your next game.');closeModal();};});
 }
