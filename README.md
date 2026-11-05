@@ -1,37 +1,30 @@
 # Puffwood Junction
 
-A cozy 3D model railway game that runs in the browser. Your layout sits on a workshop table as four baseboards, each a different region. Lay track, connect towns and industries, and run your trains automatically or drive them yourself.
+A cozy model railway game that runs in the browser. Four model railway tables stand on a workshop floor, one region each. Lay track over hills and valleys, connect towns and industries, and earn the bridges and tunnel that join the tables.
 
 ## Play
 
-Open `index.html` in a browser. It loads three.js from a CDN, so it needs an internet connection; there is no build step.
+Open `index.html` in a browser. Everything is in that one file and it needs no build step.
 
-## Regions
+## How it plays
 
-| Baseboard | Look | Industries | Unlock |
-|---|---|---|---|
-| Clover Meadows | Green fields, cottages, ponds | Farms, Food Plant | Start |
-| Ember Woods | Autumn forest, timber lodges, boulders | Lumber Camps, Sawmill | 9,000 |
-| Redrock Canyon | Layered mesas, cacti, adobe homes | Quarries, Coal Mine | 18,000 |
-| Frostpine Peaks | Snowy peaks, frozen lake, chalets | Coal Mine, Power Station, Lumber Camp | 30,000 |
+- **Tables and contracts.** You start on Clover Meadows. Each table has contracts. Crossing contracts build the bridge or tunnel to the next table, and the materials often come from another table, so you run trains between them.
+- **Terrain.** Each table is built from layered terraces: hills, valleys, rivers, a canyon and snowy peaks. Track climbs one level per tile. Dragging across a deep valley or river builds a bridge; dragging through a hill bores a tunnel. Trains slow down going uphill.
+- **Trains.** Automatic routes with "wait for full load", or Drive mode with throttle, brake, reverse and horn.
 
-Sealed baseboards show as bare plywood with the plan pencilled on. Unlocking one makes it rise into place.
-
-## Features
-
-- Drag-to-build track with automatic curves, junctions with switch lamps, bridges, buffer stops and stations
-- Four engines (Puffer, Mogul, Comet, Dash Diesel) and six car types, with visible cargo loads and paint colours
-- Automatic routes with "wait for full load", or Drive mode with throttle, brake, reverse and horn
-- Supply chains that cross regions, and towns that grow from Hamlet to City
-- Day and night lighting, steam and smoke, falling snow and leaves, a tilt-shift "model photo" blur
-- Goals, rewards, synthesised sound and an autosave in the browser
+| Table | Industries | Reached by |
+|---|---|---|
+| Clover Meadows | Farms, Food Plant, Lumber Camp | Start |
+| Ember Woods | Lumber Camps, Sawmill | Ember Bridge (logs) |
+| Frostpine Peaks | Coal Mines, Power Station, Lumber Camp | Frostpine Tunnel (lumber + food) |
+| Redrock Canyon | Quarries, Farm | Redrock Viaduct (coal + lumber) |
 
 ## Controls
 
-- Drag to pan, right-drag or Q/E to turn, scroll to zoom (touch: drag, pinch, twist)
+- Drag to pan, scroll or pinch to zoom
 - Keys 1 to 6 switch tools, Space pauses
 - When driving: W/S throttle, B brake, R reverse, H horn
 
 ## Code layout
 
-`index.html` holds the simulation (`G` game state, regions, track graph, trains, economy), a three.js renderer that builds the diorama from that state, and the DOM interface with a 2D overlay for labels.
+`index.html` holds the simulation (`G` game state, tables, heights, track graph with levels, trains, economy, contracts), a 2D renderer that bakes each table's terrain into row strips and draws everything back to front in an oblique top-down view, and the DOM interface.
