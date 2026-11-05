@@ -211,7 +211,7 @@ ol.phases small{opacity:.8;font-weight:400}
 @media (max-width:760px){#panel .sub,#panel p.tip,.dirrow span{display:none}.drive{padding:7px}.drive .row,.throttle{margin-top:4px}#panel .status{margin-bottom:6px;padding:6px 10px}#panel .sect{margin:8px 0 4px}}
 
 body.editing #top,body.editing #tools,body.editing #goal,body.editing #panel,body.editing #hint{display:none!important}
-#edBack{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:7;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#edBack{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:7;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 #edTop{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:10px;padding:7px 10px;z-index:8;border-radius:18px}
 .edTitle{font-family:var(--display);font-weight:600;font-size:16px;white-space:nowrap}
 #edName{flex:0 1 200px;min-width:90px;border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:6px 10px;font-family:var(--display);font-weight:600}
@@ -237,12 +237,19 @@ body.editing #top,body.editing #tools,body.editing #goal,body.editing #panel,bod
 .issue{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--panel2);border-left:4px solid var(--gold)}.issue.err{border-left-color:var(--danger)}.issue span{font-family:var(--display);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.issue p{margin:0;font-size:13px;line-height:1.35}
 .modal textarea{width:100%;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:8px;font:12px ui-monospace,monospace;color:var(--ink);resize:vertical}
 @media (max-width:760px){
+  #edBack{bottom:auto;left:auto;right:12px;top:calc(64px + env(safe-area-inset-top,0px))}
   #edTop{flex-wrap:wrap;gap:6px}.edTitle{display:none}#edName{flex:1}.edBtns{width:100%;margin:0}
   #edTools{top:auto;bottom:calc(10px + env(safe-area-inset-bottom,0px));left:10px;right:10px;width:auto;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:5px}
   .edGroup{flex-direction:row}.edGroup small{display:none}.edTool{flex-direction:column;gap:2px;font-size:10px;padding:5px 6px;min-width:52px;align-items:center}
   #edOpts{top:auto;bottom:calc(74px + env(safe-area-inset-bottom,0px));left:10px;right:10px;width:auto;max-height:32%;padding:10px 12px}#edOpts .tip{display:none}
   #edInfo{display:none}
 }
+.tcard{border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:7px 8px;margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.tc1{display:flex;gap:6px;align-items:center}.tc1 i{width:10px;height:10px;border-radius:3px;flex:none}.tc1 input{flex:1}
+.tc1 .mini-x.arm{width:auto;padding:0 8px;background:var(--danger);color:#fff;border-radius:8px;font-size:12px}
+.tc2{display:flex;gap:8px;align-items:center}.tc2 select{flex:1;width:auto!important}.tc2 .chk{margin:0;font-size:12px;white-space:nowrap}
+.tc3{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}.tc3 b{min-width:20px;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}.tc3 button{border:1px solid var(--line);background:var(--panel);border-radius:8px;width:24px;height:24px;padding:0;color:var(--ink)}.tc3 span{margin-left:4px}
+.conn{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:10px;background:var(--panel2);margin-bottom:5px;border-left:3px solid var(--good)}.conn.warn{border-left-color:var(--gold)}.conn b{display:block;font-size:12.5px}.conn small{color:var(--muted);font-size:11.5px}.conn .btn{padding:4px 8px}
 </style>
 
 <canvas id="c" tabindex="0" aria-label="Model railway tables"></canvas>
@@ -269,9 +276,10 @@ body.editing #top,body.editing #tools,body.editing #goal,body.editing #panel,bod
 <nav id="tools" class="card" aria-label="Tools">
   <button class="tool" data-tool="select" title="Look & select (1)"><svg class="i" viewBox="0 0 24 24"><path d="M6 3l12 7-5.5 1.6L10 18z"/></svg>Select</button>
   <button class="tool" data-tool="track" title="Lay track (2)"><svg class="i" viewBox="0 0 24 24"><path d="M8 3v18M16 3v18M5 6.5h14M5 12h14M5 17.5h14"/></svg>Track</button>
-    <button class="tool" data-tool="bulldoze" title="Remove (3)"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>Remove</button>
-  <button class="tool" data-tool="tree" title="Plant trees (4)"><svg class="i" viewBox="0 0 24 24"><path d="M12 22v-5M12 2l6 8h-3l4 6H5l4-6H6z"/></svg>Trees</button>
-  <button class="tool" data-tool="fleet" title="Fleet (5)"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 9.5h14M8 20l-2 2M16 20l2 2"/><circle cx="9" cy="13" r=".6"/><circle cx="15" cy="13" r=".6"/></svg>Fleet</button>
+  <button class="tool" data-tool="station" title="Build a station (3)"><svg class="i" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v10h14V10M10 20v-5h4v5"/></svg>Station</button>
+    <button class="tool" data-tool="bulldoze" title="Remove (4)"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>Remove</button>
+  <button class="tool" data-tool="tree" title="Plant trees (5)"><svg class="i" viewBox="0 0 24 24"><path d="M12 22v-5M12 2l6 8h-3l4 6H5l4-6H6z"/></svg>Trees</button>
+  <button class="tool" data-tool="fleet" title="Fleet (6)"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 9.5h14M8 20l-2 2M16 20l2 2"/><circle cx="9" cy="13" r=".6"/><circle cx="15" cy="13" r=".6"/></svg>Fleet</button>
 </nav>
 <div id="hint"></div>
 <aside id="panel" class="card hidden" aria-live="polite"></aside>
@@ -286,7 +294,7 @@ body.editing #top,body.editing #tools,body.editing #goal,body.editing #panel,bod
 
 
 // ---------------- CONSTANTS ----------------
-const TS=40,H=20,BW=24,BH=16,GT=3,MW=BW*2+GT,MH=BH*2+GT,N=MW*MH;
+const TS=40,H=20,BW=24,BH=16,GT=3;let MW=BW*2+GT,MH=BH*2+GT,N=MW*MH;
 const LIFT=9,THICK=26,FLOOR_L=-3,DAY=300,BRAKE=50,GAP=3,CR=3,CAP=160,CARLEN=26,VW=13;
 const DX=[0,1,0,-1],DY=[-1,0,1,0];
 const PIECES=[[0,2],[1,3],[0,1],[1,2],[2,3],[3,0]];
@@ -299,7 +307,7 @@ const CURVE=PIECES.map(([a,b],p)=>{
   let d=ab-aa;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
   return{kx,ky,aa,d};
 });
-const REGIONS=[
+const STYLE_LIST=[
   {key:'meadow',name:'Clover Meadows',accent:'#5f9a3e',towns:['Clovermead','Hayford','Buttercup Green'],inds:['farm','farm','foodplant','forest'],trees:['oak','oak','birch','bush'],house:'cottage',treeRate:.45,
    lev:['#72a94c','#80b454','#8fbf5c','#9dc964','#a9d06c'],faces:['#8b6a45','#9a7650','#7d5d3c'],water:'#5aaed0'},
   {key:'autumn',name:'Ember Woods',accent:'#d0702e',towns:['Maplewood','Acorn Hollow','Ember Glen'],inds:['forest','forest','sawmill'],trees:['autumn','autumn','pine','autumn'],house:'lodge',treeRate:.85,
@@ -311,7 +319,17 @@ const REGIONS=[
 ];
 
 let EDIT=null;const RV=ri=>!!EDIT||G.reg[ri];
-function applyNames(){if(G&&G.rnames)G.rnames.forEach((n,i)=>{if(n)REGIONS[i].name=n;});}
+function applyNames(){if(G&&G.rnames)G.rnames.forEach((n,i)=>{if(n&&REGIONS[i])REGIONS[i].name=n;});}
+const STYLES={};for(const st of STYLE_LIST)STYLES[st.key]=st;
+const DEFAULT_TABLES=()=>STYLE_LIST.map((st,i)=>({style:st.key,name:st.name,x0:(i%2)*(BW+GT),y0:(i>>1)*(BH+GT),w:BW,h:BH}));
+let REGIONS=[],TBL=null;
+function setTables(list){
+  REGIONS=list.map(t=>{const st=STYLES[t.style]||STYLE_LIST[0];return Object.assign({},st,{style:st.key,name:t.name||st.name,x0:t.x0,y0:t.y0,w:t.w,h:t.h});});
+  MW=Math.max(8,...REGIONS.map(r=>r.x0+r.w));MH=Math.max(6,...REGIONS.map(r=>r.y0+r.h));N=MW*MH;TBL=new Int8Array(N).fill(-1);
+  REGIONS.forEach((r,ri)=>{for(let y=r.y0;y<r.y0+r.h;y++)for(let x=r.x0;x<r.x0+r.w;x++)TBL[y*MW+x]=ri;});
+}
+const curTables=()=>REGIONS.map(r=>({style:r.style,name:r.name,x0:r.x0,y0:r.y0,w:r.w,h:r.h}));
+setTables(DEFAULT_TABLES());
 const CARGO={
   logs:{name:'Logs',col:'#9a6a40'},gravel:{name:'Gravel',col:'#a9a49c'},planks:{name:'Planks',col:'#d8a96a'},
   slabs:{name:'Concrete Slabs',short:'Slabs',col:'#c9c7c0'},rails:{name:'Rails',col:'#7d858e'},beams:{name:'Steel Beams',short:'Beams',col:'#5f6a78'},
@@ -370,8 +388,8 @@ function mulberry32(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15
 function shuffle(a,R){for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function field(cell,R){const gw=Math.ceil(MW/cell)+2,gh=Math.ceil(MH/cell)+2,g=new Float32Array(gw*gh);for(let i=0;i<g.length;i++)g[i]=R();
   return(x,y)=>{const fx=x/cell,fy=y/cell,ix=Math.floor(fx),iy=Math.floor(fy);let tx=fx-ix,ty=fy-iy;tx=tx*tx*(3-2*tx);ty=ty*ty*(3-2*ty);return lerp(lerp(g[iy*gw+ix],g[iy*gw+ix+1],tx),lerp(g[(iy+1)*gw+ix],g[(iy+1)*gw+ix+1],tx),ty);};}
-const tableOf=(x,y)=>{const rx=x<BW?0:x>=BW+GT?1:-1,ry=y<BH?0:y>=BH+GT?1:-1;return rx<0||ry<0?-1:ry*2+rx;};
-const tb=ri=>{const rx=ri%2,ry=ri>>1,x0=rx*(BW+GT),y0=ry*(BH+GT);return{x0,y0,x1:x0+BW-1,y1:y0+BH-1};};
+const tableOf=(x,y)=>x<0||y<0||x>=MW||y>=MH?-1:TBL[y*MW+x];
+const tb=ri=>{const r=REGIONS[ri];return{x0:r.x0,y0:r.y0,x1:r.x0+r.w-1,y1:r.y0+r.h-1,w:r.w,h:r.h};};
 const isOpen=(x,y)=>{if(!inMap(x,y))return false;const t=tableOf(x,y);return t>=0&&(G.reg[t]||!!EDIT);};
 function hexRGB(h){const c=parseInt(h.slice(1),16);return[c>>16,c>>8&255,c&255];}
 function shade(hex,amt){let[r,g,b]=hexRGB(hex);if(amt>0){r+=(255-r)*amt;g+=(255-g)*amt;b+=(255-b)*amt;}else{r*=1+amt;g*=1+amt;b*=1+amt;}return`rgb(${r|0},${g|0},${b|0})`;}
@@ -444,10 +462,10 @@ function pieceFor(e1,e2){for(let p=0;p<6;p++){const[a,b]=PIECES[p];if((a===e1&&b
 function dirTo(ax,ay,bx,by){if(bx>ax)return 1;if(bx<ax)return 3;if(by>ay)return 2;return 0;}
 
 function baseG(seed){return{v:5,seed:seed||0,money:3000,earned:0,time:DAY*8/24,speed:1,sw:{},swVer:1,towns:[],inds:[],projects:[],trains:[],nid:1,trackVer:1,buildVer:1,pieces:0,
-    reg:[true,false,false,false],cross:{},g:{},depot:null,shop:false,pdefs:JSON.parse(JSON.stringify(PROJ_DEFS)),rnames:REGIONS.map(r=>r.name),
+    reg:REGIONS.map((_,i)=>i===0),cross:{},g:{},depot:null,shop:false,pdefs:JSON.parse(JSON.stringify(PROJ_DEFS)),
     terr:U8(),tree:U8(),track:U8(),own:I16(),h:I8(),tl:I8(),tk:U8(),fix:U8(),bp:U8(),bpK:U8(),bpP:I16(),seen:U8(),zone:U8(),res:U8()};}
 function genWorld(seed){
-  const R=mulberry32(seed);
+  setTables(DEFAULT_TABLES());const R=mulberry32(seed);
   G=baseG(seed);Object.assign(G,{v:5,seed,money:3000,earned:0,time:DAY*8/24,speed:1,sw:{},swVer:1,towns:[],inds:[],projects:[],trains:[],nid:1,trackVer:1,buildVer:1,pieces:0,
     reg:[true,false,false,false],cross:{},g:{},depot:null,shop:false,
     terr:U8(),tree:U8(),track:U8(),own:I16(),h:I8(),tl:I8(),tk:U8(),fix:U8(),bp:U8(),bpK:U8(),bpP:I16(),seen:U8(),zone:U8(),res:U8()});
@@ -456,7 +474,7 @@ function genWorld(seed){
     if(ri<0){G.terr[i]=3;G.h[i]=FLOOR_L;continue;}
     const v=clamp((n1(x,y)*.7+n2(x,y)*.3-.22)/.56,0,1),k=REGIONS[ri].key;
     G.h[i]=k==='meadow'?Math.round(v*2.3):k==='autumn'?Math.round(v*3):k==='snow'?Math.round(Math.pow(v,1.1)*6.4):3+(n3(x,y)>.66?2:0);}
-  for(let ri=0;ri<4;ri++){const k=REGIONS[ri].key;carveRiver(ri,R,k==='canyon'?'canyon':k==='snow'?'valley':'river');if(k!=='canyon'&&k!=='autumn')lake(ri,R,k==='meadow'?1.6:2.2);}
+  for(let ri=0;ri<REGIONS.length;ri++){const k=REGIONS[ri].key;carveRiver(ri,R,k==='canyon'?'canyon':k==='snow'?'valley':'river');if(k!=='canyon'&&k!=='autumn')lake(ri,R,k==='meadow'?1.6:2.2);}
   G.cross.A={dir:'h',at:4+Math.floor(R()*(BH-9))};G.cross.T={dir:'v',at:BW+GT+5+Math.floor(R()*(BW-10))};
   for(const id in G.cross){const c=G.cross[id],t=crossTiles(id);
     for(const[x,y]of t){if(tableOf(x,y)<0)continue;for(let d=-2;d<=2;d++)for(let e=-3;e<=3;e++){const X=c.dir==='h'?x+e:x+d,Y=c.dir==='h'?y+d:y+e;if(inMap(X,Y)&&tableOf(X,Y)===tableOf(x,y)){const j=idx(X,Y);G.h[j]=1;G.terr[j]=0;}}}
@@ -543,6 +561,7 @@ function genWorld(seed){
   const mid=dline[3];revealAround(mid[0],mid[1],6,true);revealAround(t0.x,t0.y,5,true);
   G.camStart={x:mid[0]*TS+H,y:mid[1]*TS};
   for(const t of G.trains){if(t.ab)continue;const e=t.veh.find(v=>v.kind==='eng');if(!e)continue;const h=pointBehind(t,0);revealAround(Math.floor(h.x/TS),Math.floor(h.y/TS),ENGINES[e.e].reveal,true);}
+  for(const o of[...G.towns,...G.inds])o.dock=null;recomputeOwnRes();
   rebuildDocks();computeZones();checkDiscover(true);
   return true;
 }
@@ -582,13 +601,13 @@ function addConsist(name,veh,tiles,ab){
   const segs=[];for(let i=0;i<tiles.length;i++){const[x,y]=tiles[i],[nx,ny]=i>0?tiles[i-1]:[2*x-tiles[1][0],2*y-tiles[1][1]];const p=tiles.some(t=>t[1]!==tiles[0][1])?0:1;const m=dirTo(x,y,nx,ny);segs.push({x,y,p,d:PIECES[p][1]===m?0:1});}
   const t={id:G.nid++,name,veh,segs,hp:PLEN[segs[0].p]*.9,v:0,thr:0,brk:false,ab,odo:0};G.trains.push(t);trimSegs(t);return t;
 }
-function rebuildDocks(){DOCK.clear();G.inds.forEach((d,i)=>{for(const[x,y]of d.dock)DOCK.set(idx(x,y),{k:'ind',i});});G.towns.forEach((d,i)=>{for(const[x,y]of d.dock)DOCK.set(idx(x,y),{k:'town',i});});}
+function rebuildDocks(){DOCK.clear();G.inds.forEach((d,i)=>{for(const[x,y]of d.dock||[])DOCK.set(idx(x,y),{k:'ind',i});});G.towns.forEach((d,i)=>{for(const[x,y]of d.dock||[])DOCK.set(idx(x,y),{k:'town',i});});}
 function revealAround(x,y,r,silent){const r2=r*r+r;let found=false;for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){if(dx*dx+dy*dy>r2)continue;const X=x+dx,Y=y+dy;if(!inMap(X,Y))continue;const t=tableOf(X,Y);if(t>=0&&!G.reg[t])continue;const i=idx(X,Y);if(!G.seen[i]){G.seen[i]=1;found=true;}}
   if(found){G.buildVer++;if(!silent)checkDiscover(false);}}
 function checkDiscover(silent){
   const seenAny=pts=>pts.some(([x,y])=>G.seen[idx(x,y)]);
-  for(const d of G.inds)if(!d.seen&&G.reg[d.ri]&&seenAny([[d.x,d.y],[d.x+1,d.y+1],...d.dock])){d.seen=true;if(!silent)HOOK.found(d.name,d.x+1,d.y+1);}
-  for(const t of G.towns)if(!t.seen&&G.reg[t.ri]&&seenAny([[t.x,t.y],...t.dock])){t.seen=true;if(!silent)HOOK.found(t.name,t.x,t.y);}
+  for(const d of G.inds)if(!d.seen&&G.reg[d.ri]&&seenAny([[d.x,d.y],[d.x+1,d.y+1],...(d.dock||[])])){d.seen=true;if(!silent)HOOK.found(d.name,d.x+1,d.y+1);}
+  for(const t of G.towns)if(!t.seen&&G.reg[t.ri]&&seenAny([[t.x,t.y],...(t.dock||[])])){t.seen=true;if(!silent)HOOK.found(t.name,t.x,t.y);}
   for(const p of G.projects){if(p.seen||p.site<0)continue;const x=p.site%MW,y=(p.site-x)/MW;if(G.seen[p.site]||p.tiles.some(i=>G.seen[i])){p.seen=true;if(!silent&&p.id!=='shed')HOOK.found(projDef(p).name,x,y);}}
 }
 function computeZones(){
@@ -763,8 +782,8 @@ function buyCar(type){
 }
 // ---- save / load ----
 const SAVE_KEY='puffwood-junction-v5',ARR={terr:Uint8Array,tree:Uint8Array,track:Uint8Array,own:Int16Array,h:Int8Array,tl:Int8Array,tk:Uint8Array,fix:Uint8Array,bp:Uint8Array,bpK:Uint8Array,bpP:Int16Array,seen:Uint8Array,zone:Uint8Array,res:Uint8Array};
-function save(){if(!G)return;try{const o=Object.assign({},G);for(const k in ARR)o[k]=Array.from(G[k]);localStorage.setItem(SAVE_KEY,JSON.stringify(o,(k,v)=>(k==='look'||k==='svcMsg')?undefined:v));}catch(e){}}
-function load(){try{const s=localStorage.getItem(SAVE_KEY);if(!s)return false;const o=JSON.parse(s);if(!o||o.v!==5)return false;for(const k in ARR)o[k]=ARR[k].from(o[k]);G=o;if(!G.pdefs)G.pdefs=JSON.parse(JSON.stringify(PROJ_DEFS));applyNames();rebuildDocks();return true;}catch(e){return false;}}
+function save(){if(!G)return;try{const o=Object.assign({},G,{tables:curTables()});for(const k in ARR)o[k]=Array.from(G[k]);localStorage.setItem(SAVE_KEY,JSON.stringify(o,(k,v)=>(k==='look'||k==='svcMsg')?undefined:v));}catch(e){}}
+function load(){try{const s=localStorage.getItem(SAVE_KEY);if(!s)return false;const o=JSON.parse(s);if(!o||o.v!==5)return false;setTables(o.tables||DEFAULT_TABLES());if(o.terr.length!==N)return false;for(const k in ARR)o[k]=ARR[k].from(o[k]);G=o;while(G.reg.length<REGIONS.length)G.reg.push(false);if(!G.pdefs)G.pdefs=JSON.parse(JSON.stringify(PROJ_DEFS));applyNames();rebuildDocks();return true;}catch(e){return false;}}
 
 const Snd={ctx:null,master:null,muted:false,last:{},
   init(){if(this.ctx)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;this.ctx=new C();this.master=this.ctx.createGain();this.master.gain.value=this.muted?0:.55;this.master.connect(this.ctx.destination);
@@ -812,7 +831,7 @@ function circ(c,x,y,r){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();}
 const lev=(x,y)=>G.track[idx(x,y)]?G.tl[idx(x,y)]:Math.max(0,G.h[idx(x,y)]);
 
 // ---- terrain bake: per table, one strip canvas per tile row ----
-const BAKE=[null,null,null,null];
+const BAKE=[];
 
 // ---- floor (baked once) ----
 let floorCan=null;
@@ -823,7 +842,7 @@ function bakeFloor(){
     for(let x=(y*7)%180;x<W;x+=180+((y*13)%90))c.fillRect(x,y,1,25);}
   for(let i=0;i<300;i++){c.strokeStyle=`rgba(0,0,0,${.05+Math.random()*.06})`;c.beginPath();const y=Math.random()*Hh;c.moveTo(0,y);c.lineTo(W,y+(Math.random()-.5)*6);c.stroke();}
   c.save();c.scale(s,s);c.translate(300,300);
-  for(let ri=0;ri<4;ri++){const b=tb(ri);c.shadowColor='rgba(0,0,0,.55)';c.shadowBlur=60;c.shadowOffsetX=16;c.shadowOffsetY=30;c.fillStyle='#2a1e14';c.fillRect(b.x0*TS,b.y0*TS,BW*TS,BH*TS+THICK);}
+  for(let ri=0;ri<REGIONS.length;ri++){const b=tb(ri);c.shadowColor='rgba(0,0,0,.55)';c.shadowBlur=60;c.shadowOffsetX=16;c.shadowOffsetY=30;c.fillStyle='#2a1e14';c.fillRect(b.x0*TS,b.y0*TS,b.w*TS,b.h*TS+THICK);}
   c.restore();
 }
 
@@ -907,7 +926,7 @@ function duskTint(){const h=(G.time%DAY)/DAY*24;return Math.max(0,1-Math.abs(h-1
 
 const WX=[];
 function weather(ri,col,t,size,speed){const b=tb(ri);if(!WX[ri]){WX[ri]=[];for(let i=0;i<180;i++)WX[ri].push([Math.random(),Math.random(),Math.random()]);}
-  ctx.fillStyle=`rgba(${col},.85)`;const W=BW*TS,Hh=BH*TS;for(const p of WX[ri]){const y=((p[1]*Hh+t*speed*(.6+p[2]*.6))%(Hh+80))-80,x=p[0]*W+Math.sin(t+p[2]*9)*8;ctx.fillRect(b.x0*TS+x,b.y0*TS+y,size,size);}}
+  ctx.fillStyle=`rgba(${col},.85)`;const W=b.w*TS,Hh=b.h*TS;for(const p of WX[ri]){const y=((p[1]*Hh+t*speed*(.6+p[2]*.6))%(Hh+80))-80,x=p[0]*W+Math.sin(t+p[2]*9)*8;ctx.fillRect(b.x0*TS+x,b.y0*TS+y,size,size);}}
 function drawGhostRow(y){
   for(const it of TD.plan.items){if(it.y!==y)continue;const z=it.L*LIFT;const pts=[];for(let k=0;k<=6;k++){const q=piecePoint(it.x,it.y,it.p,k/6);pts.push([q.x,q.y-z]);}
     ctx.lineCap='round';ctx.strokeStyle=it.bad?'rgba(220,60,50,.7)':it.k===2?'rgba(60,60,70,.55)':it.k===1?'rgba(255,220,150,.8)':'rgba(255,255,255,.65)';ctx.lineWidth=14;ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(const p of pts)ctx.lineTo(p[0],p[1]);ctx.stroke();}
@@ -1022,20 +1041,20 @@ function drawSiteMark(c,p){
 let FOGPAT=null;
 function fogPat(){if(FOGPAT)return FOGPAT;const c=document.createElement('canvas');c.width=c.height=48;const x=c.getContext('2d');x.fillStyle='#e9e1cd';x.fillRect(0,0,48,48);x.strokeStyle='rgba(120,105,80,.2)';x.lineWidth=1;for(let k=-48;k<96;k+=7){x.beginPath();x.moveTo(k,0);x.lineTo(k+48,48);x.stroke();}FOGPAT=ctx.createPattern(c,'repeat');return FOGPAT;}
 function drawSheet(c,ri){
-  const b=tb(ri),x0=b.x0*TS,y0=b.y0*TS,W=BW*TS,Hh=BH*TS,an=BAKE[ri]&&BAKE[ri].reveal;let k=1;if(an){k=1-clamp((now()-an)/1.6,0,1);if(k<=0)return;}
+  const b=tb(ri),x0=b.x0*TS,y0=b.y0*TS,W=b.w*TS,Hh=b.h*TS,an=BAKE[ri]&&BAKE[ri].reveal;let k=1;if(an){k=1-clamp((now()-an)/1.6,0,1);if(k<=0)return;}
   c.save();c.globalAlpha=k;c.translate(0,-(1-k)*120);
   if(!an){c.fillStyle='#5e4029';c.fillRect(x0,y0+Hh,W,THICK);c.fillStyle=REGIONS[ri].accent;c.fillRect(x0,y0+Hh,W,3);}
   const g=c.createLinearGradient(x0,y0,x0+W,y0+Hh);g.addColorStop(0,'#ece5d6');g.addColorStop(.5,'#e2d9c6');g.addColorStop(1,'#d8ceb9');c.fillStyle=g;c.fillRect(x0-4,y0-14,W+8,Hh+18);
   c.strokeStyle='rgba(120,100,70,.18)';c.lineWidth=6;for(let i=0;i<7;i++){c.beginPath();c.moveTo(x0+i*W/6,y0-14);c.bezierCurveTo(x0+i*W/6+60,y0+Hh*.3,x0+i*W/6-40,y0+Hh*.7,x0+i*W/6+30,y0+Hh+4);c.stroke();}
-  c.fillStyle='rgba(60,45,35,.75)';c.textAlign='center';c.textBaseline='middle';c.font='700 64px Caveat, cursive';c.fillText(REGIONS[ri].name,x0+W/2,y0+Hh/2-24);
-  c.font='700 30px Caveat, cursive';c.fillText(ri===1?'Reach it by building the Ember Bridge':'Coming in a future update',x0+W/2,y0+Hh/2+28);c.restore();
+  c.fillStyle='rgba(60,45,35,.75)';c.textAlign='center';c.textBaseline='middle';const fs=clamp(W/10,28,64);c.font=`700 ${fs}px Caveat, cursive`;c.fillText(REGIONS[ri].name,x0+W/2,y0+Hh/2-fs*.38);
+  const gj=G.projects.find(p=>projDef(p).gate===ri&&!projDef(p).locked);c.font=`700 ${fs*.47}px Caveat, cursive`;c.fillText(gj?`Opens when “${projDef(gj).name}” is done`:'Coming in a future update',x0+W/2,y0+Hh/2+fs*.44);c.restore();
 }
 // ---- rows ----
 let rowObjs=[],rowVer='',treeVer=0,DOCKROW=[];
 function buildRows(){
   rowObjs=Array.from({length:MH},()=>[]);DOCKROW=Array.from({length:MH},()=>[]);
-  for(const tw of G.towns){if(!RV(tw.ri))continue;for(const h of tw.houses)if(G.seen[idx(h.x,h.y)])rowObjs[h.y].push({k:'house',h,tw,x:h.x});if(tw.seen)DOCKROW[Math.max(...tw.dock.map(d=>d[1]))].push([tw,false]);}
-  for(const ind of G.inds){if(!RV(ind.ri)||!ind.seen)continue;rowObjs[ind.y+1].push({k:'ind',ind,x:ind.x});DOCKROW[Math.max(...ind.dock.map(d=>d[1]))].push([ind,true]);}
+  for(const tw of G.towns){if(!RV(tw.ri))continue;for(const h of tw.houses)if(G.seen[idx(h.x,h.y)])rowObjs[h.y].push({k:'house',h,tw,x:h.x});if(tw.seen&&tw.dock)DOCKROW[Math.max(...tw.dock.map(d=>d[1]))].push([tw,false]);}
+  for(const ind of G.inds){if(!RV(ind.ri)||!ind.seen)continue;rowObjs[ind.y+1].push({k:'ind',ind,x:ind.x});if(ind.dock)DOCKROW[Math.max(...ind.dock.map(d=>d[1]))].push([ind,true]);}
   for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const tr=G.tree[idx(x,y)];if(tr&&isOpen(x,y)&&G.seen[idx(x,y)])rowObjs[y].push({k:'tree',t:tr,x,y});}
   for(const r of rowObjs)r.sort((a,b)=>a.x-b.x);buildObs();rowVer=G.buildVer+':'+treeVer;
 }
@@ -1052,8 +1071,8 @@ function render(t,rdt){
   const zoneShow=!EDIT&&(tool==='track'||tool==='bulldoze'),shedRow=G.depot?G.depot.tiles[0][1]:-1,fp=fogPat();
   const sitesByRow=new Map();for(const p of G.projects){if(p.done||p.site<0||!p.seen||G.pdefs[p.id].locked&&false)continue;const y=Math.floor(p.site/MW);if(!sitesByRow.has(y))sitesByRow.set(y,[]);sitesByRow.get(y).push(p);}
   for(let y=y0;y<=y1;y++){
-    for(let ri=0;ri<4;ri++){const b=tb(ri);if(y<b.y0||y>b.y1||b.x1<x0||b.x0>x1)continue;if(BAKE[ri]&&RV(ri)){const B=BAKE[ri],ty=y-b.y0;ctx.drawImage(B.strips[ty],b.x0*TS,(b.y0+ty)*TS+B.top0);}}
-    if(G.cross.T)for(const[x,yy]of crossTiles('T'))if(yy===y&&tableOf(x,yy)<0&&G.track[idx(x,yy)]){const cx=x*TS+H,cy=yy*TS+H;box(ctx,cx,cy,-THICK,30,TS,THICK+LIFT+30,'#7f8a6a','#6f6458');}
+    for(let ri=0;ri<REGIONS.length;ri++){const b=tb(ri);if(y<b.y0||y>b.y1||b.x1<x0||b.x0>x1)continue;if(BAKE[ri]&&RV(ri)){const B=BAKE[ri],ty=y-b.y0;ctx.drawImage(B.strips[ty],b.x0*TS,(b.y0+ty)*TS+B.top0);}}
+    for(let x=x0;x<=x1;x++){const i=idx(x,y);if(tableOf(x,y)<0&&G.track[i]&&G.tk[i]===2){const cx=x*TS+H,cy=y*TS+H,lz=G.tl[i]*LIFT;const hz=G.track[i]&2;box(ctx,cx,cy,-THICK,hz?TS:30,hz?30:TS,THICK+lz+28,'#7f8a6a','#6f6458');}}
     for(const[o,isInd]of DOCKROW[y])drawDockBase(ctx,o,isInd);
     for(let x=x0;x<=x1;x++){const i=idx(x,y);if((G.track[i]||G.bp[i])&&G.seen[i])drawTrackTile(ctx,x,y);}
     if(cam.z>.45)drawSwitches(ctx,y);
@@ -1069,7 +1088,7 @@ function render(t,rdt){
     if(y===shedRow)drawShed(ctx,true);
     const ss=sitesByRow.get(y);if(ss)for(const p of ss)if(!G.pdefs[p.id].locked)drawSiteMark(ctx,p);
     ctx.fillStyle=fp;for(let x=x0;x<=x1;x++){const i=idx(x,y),ri=tableOf(x,y);if(ri<0||!RV(ri)||G.seen[i])continue;let hm=G.h[i];for(const[dx,dy]of[[0,-1],[-1,0],[1,0],[-1,-1],[1,-1]]){const X=x+dx,Y=y+dy;if(inMap(X,Y)&&tableOf(X,Y)===ri)hm=Math.max(hm,G.h[idx(X,Y)]);}const hz=Math.max(0,hm)*LIFT+3;ctx.fillRect(x*TS-1,y*TS-hz-3,TS+2,TS+hz+5+(y+1<MH&&!G.seen[idx(x,y+1)]?0:Math.max(0,G.h[i]-(y+1<MH?G.h[idx(x,y+1)]:0))*LIFT));}
-    for(let ri=0;ri<4;ri++){const b=tb(ri);if(y===Math.max(b.y0,y0)&&b.x1>=x0&&b.x0<=x1&&(!RV(ri)||(BAKE[ri]&&BAKE[ri].reveal)))drawSheet(ctx,ri);}
+    for(let ri=0;ri<REGIONS.length;ri++){const b=tb(ri);if(y===Math.max(b.y0,y0)&&b.x1>=x0&&b.x0<=x1&&(!RV(ri)||(BAKE[ri]&&BAKE[ri].reveal)))drawSheet(ctx,ri);}
   }
   const sp=G.speed;
   for(const tr of G.trains){const pv=tr.pv??tr.v;tr.pv=tr.v;const ps=poseCache.get(tr.id);if(sp<=0||tr.ab)continue;
@@ -1085,13 +1104,13 @@ function render(t,rdt){
   }
   for(let i=P.length-1;i>=0;i--){const q=P[i];q.life+=rdt;if(q.life>=q.max){P.splice(i,1);continue;}q.x+=q.vx*rdt;q.y+=q.vy*rdt;if(q.kind==='spark'){q.vx*=1-rdt*2;q.vy=q.vy*(1-rdt*2)+60*rdt;}else{q.vx*=1-rdt*.8;q.vy*=1-rdt*.5;}
     const k=q.life/q.max;ctx.fillStyle=`rgba(${q.col},${q.a*(1-k)})`;circ(ctx,q.x,q.y,q.r+q.gr*k);}
-  if(RV(1)&&!EDIT)weather(1,'224,120,47',t,2,18);
+  if(!EDIT)for(let ri=0;ri<REGIONS.length;ri++)if(RV(ri)&&REGIONS[ri].key==='autumn')weather(ri,'224,120,47',t,2,18);
   drawOverlays();
   const dusk=duskTint();ctx.setTransform(1,0,0,1,0,0);
   if(dusk>0){ctx.fillStyle=`rgba(255,140,60,${dusk*.13})`;ctx.fillRect(0,0,cv.width,cv.height);}
   if(NIGHT>0){ctx.fillStyle=`rgba(16,24,60,${NIGHT*.55})`;ctx.fillRect(0,0,cv.width,cv.height);worldTf();ctx.globalCompositeOperation='lighter';
     for(const tw of G.towns){if(!RV(tw.ri))continue;for(const h of tw.houses){if(h.x<x0||h.x>x1||h.y<y0||h.y>y1||!G.seen[idx(h.x,h.y)])continue;if(hash(h.x,h.y,11)<.3&&!h.hall)continue;ctx.globalAlpha=NIGHT*.65;const z=G.h[idx(h.x,h.y)]*LIFT;ctx.drawImage(GLOW_W,h.x*TS+H-20,h.y*TS+H-z-28,40,40);}}
-    ctx.globalAlpha=NIGHT*.7;for(const o of[...G.inds,...G.towns]){if(!o.seen)continue;const m=o.dock[1],z=(G.tl[idx(...m)]||0)*LIFT;ctx.drawImage(GLOW_W,m[0]*TS+H-22,m[1]*TS+H-z-40,44,44);}
+    ctx.globalAlpha=NIGHT*.7;for(const o of[...G.inds,...G.towns]){if(!o.seen||!o.dock)continue;const m=o.dock[1],z=(G.tl[idx(...m)]||0)*LIFT;ctx.drawImage(GLOW_W,m[0]*TS+H-22,m[1]*TS+H-z-40,44,44);}
     for(const tr of G.trains){if(tr.ab)continue;for(const ep of poseCache.get(tr.id)){if(ep.v.kind!=='eng')continue;const fa=ep.sa+(ep.v.flip?Math.PI:0);ctx.save();ctx.translate(ep.x+Math.cos(fa)*(ep.L/2+20),ep.y-ep.z-6+Math.sin(fa)*(ep.L/2+20));ctx.rotate(fa);ctx.globalAlpha=NIGHT*.9;ctx.drawImage(GLOW_H,-26,-14,52,28);ctx.restore();}}
     ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
   drawLabels(rdt);
@@ -1099,17 +1118,18 @@ function render(t,rdt){
 function drawOverlays(){
   if(EDIT){edOverlay();return;}
   const tileRect=(x,y,col,lw=2)=>{const z=lev(x,y)*LIFT;ctx.strokeStyle=col;ctx.lineWidth=lw/cam.z*1.2;rr(ctx,x*TS+2,y*TS+2-z,TS-4,TS-4,7);ctx.stroke();};
-  if(hoverT&&tool!=='select'){const{x,y}=hoverT;tileRect(x,y,tool==='bulldoze'?'rgba(220,70,60,.95)':zoneOk(x,y)?'rgba(255,255,255,.85)':'rgba(220,70,60,.8)',tool==='bulldoze'?3:2);}
-  if(SEL&&(SEL.k==='ind')){const o=G.inds[SEL.id];const z=G.h[idx(o.x,o.y)]*LIFT;ctx.strokeStyle='rgba(255,214,90,1)';ctx.lineWidth=3/cam.z*1.2;rr(ctx,o.x*TS-2,o.y*TS-2-z,TS*2+4,TS*2+4,10);ctx.stroke();for(const[x,y]of o.dock)tileRect(x,y,'rgba(255,214,90,.8)',2);}
-  if(SEL&&SEL.k==='town'){const tw=G.towns[SEL.id];for(const h of tw.houses)tileRect(h.x,h.y,'rgba(255,214,90,.8)',2);for(const[x,y]of tw.dock)tileRect(x,y,'rgba(255,214,90,1)',2);}
+  if(hoverT&&tool==='station'){const r=stationAt(hoverT.x,hoverT.y),col=r.err?'rgba(220,70,60,.9)':'rgba(120,230,140,1)';for(const[x,y]of r.tiles||[[hoverT.x,hoverT.y]])tileRect(x,y,col,3);if(r.target){const o=r.target.k==='ind'?G.inds[r.target.i]:G.towns[r.target.i];if(r.target.k==='ind'){const z=G.h[idx(o.x,o.y)]*LIFT;ctx.strokeStyle=col;ctx.lineWidth=2.5/cam.z*1.2;rr(ctx,o.x*TS-2,o.y*TS-2-z,TS*2+4,TS*2+4,10);ctx.stroke();}else for(const hh of o.houses)tileRect(hh.x,hh.y,col,1.5);}}
+  else if(hoverT&&tool!=='select'){const{x,y}=hoverT;tileRect(x,y,tool==='bulldoze'?'rgba(220,70,60,.95)':zoneOk(x,y)?'rgba(255,255,255,.85)':'rgba(220,70,60,.8)',tool==='bulldoze'?3:2);}
+  if(SEL&&(SEL.k==='ind')){const o=G.inds[SEL.id];const z=G.h[idx(o.x,o.y)]*LIFT;ctx.strokeStyle='rgba(255,214,90,1)';ctx.lineWidth=3/cam.z*1.2;rr(ctx,o.x*TS-2,o.y*TS-2-z,TS*2+4,TS*2+4,10);ctx.stroke();for(const[x,y]of o.dock||[])tileRect(x,y,'rgba(255,214,90,.8)',2);}
+  if(SEL&&SEL.k==='town'){const tw=G.towns[SEL.id];for(const h of tw.houses)tileRect(h.x,h.y,'rgba(255,214,90,.8)',2);for(const[x,y]of tw.dock||[])tileRect(x,y,'rgba(255,214,90,1)',2);}
   if(SEL&&SEL.k==='proj'){const p=G.projects[SEL.id];for(const i of p.tiles){const x=i%MW,y=(i-x)/MW;if(G.seen[i])tileRect(x,y,'rgba(140,200,255,.9)',2);}if(p.site>=0){const x=p.site%MW;tileRect(x,(p.site-x)/MW,'rgba(255,214,90,1)',3);}}
 }
 function drawLabels(rdt){
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  for(let ri=0;ri<4;ri++){const b=tb(ri),s=w2s((b.x0+BW/2)*TS,(b.y1+1)*TS+THICK/2,0);if(!visS(s))continue;ctx.font=`700 ${clamp(15*cam.z,9,15)}px Fredoka, system-ui`;const w=ctx.measureText(REGIONS[ri].name).width+20,hh=clamp(18*cam.z,12,18);ctx.fillStyle='#c9a45a';rr(ctx,s.x-w/2,s.y-hh/2,w,hh,4);ctx.fill();ctx.fillStyle='#4a3418';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(REGIONS[ri].name,s.x,s.y+.5);}
-  for(const tw of G.towns){if(!tw.seen||!RV(tw.ri))continue;const s=w2s(tw.x*TS+H,tw.y*TS-8,G.h[idx(tw.x,tw.y)]*LIFT+32);if(visS(s))labelPill(s.x,s.y,tw.name,`${LEVELS[tw.lvl].name} · buys planks & slabs`,'rgba(255,250,240,.94)','#3b342b',14);}
+  for(let ri=0;ri<REGIONS.length;ri++){const b=tb(ri),s=w2s((b.x0+b.w/2)*TS,(b.y1+1)*TS+THICK/2,0);if(!visS(s))continue;ctx.font=`700 ${clamp(15*cam.z,9,15)}px Fredoka, system-ui`;const w=ctx.measureText(REGIONS[ri].name).width+20,hh=clamp(18*cam.z,12,18);ctx.fillStyle='#c9a45a';rr(ctx,s.x-w/2,s.y-hh/2,w,hh,4);ctx.fill();ctx.fillStyle='#4a3418';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(REGIONS[ri].name,s.x,s.y+.5);}
+  for(const tw of G.towns){if(!tw.seen||!RV(tw.ri))continue;const s=w2s(tw.x*TS+H,tw.y*TS-8,G.h[idx(tw.x,tw.y)]*LIFT+32);if(visS(s))labelPill(s.x,s.y,tw.name,tw.dock?`${LEVELS[tw.lvl].name} · buys planks & slabs`:`${LEVELS[tw.lvl].name} · no station yet`,'rgba(255,250,240,.94)','#3b342b',14);}
   if(cam.z>.5)for(const ind of G.inds){if(!ind.seen||!RV(ind.ri))continue;const s=w2s(ind.x*TS+TS,ind.y*TS-4,G.h[idx(ind.x,ind.y)]*LIFT+24);if(!visS(s))continue;
-    const st=Object.keys(ind.stock).filter(c=>ind.stock[c]>0).map(c=>`${CARGO[c].short||CARGO[c].name} ${ind.stock[c]}`).join(' · ');labelPill(s.x,s.y,IND[ind.type].name,st||(IND[ind.type].in?'needs '+CARGO[IND[ind.type].in].name.toLowerCase():'empty'),'rgba(50,44,36,.86)','#fff',12);}
+    const st=Object.keys(ind.stock).filter(c=>ind.stock[c]>0).map(c=>`${CARGO[c].short||CARGO[c].name} ${ind.stock[c]}`).join(' · ');labelPill(s.x,s.y,IND[ind.type].name,!ind.dock?(st?st+' · no station':'no station yet'):st||(IND[ind.type].in?'needs '+CARGO[IND[ind.type].in].name.toLowerCase():'empty'),'rgba(50,44,36,.86)','#fff',12);}
   if(G.depot){const dt=G.depot.tiles[0],s=w2s(dt[0]*TS+H,dt[1]*TS-6,G.h[idx(...dt)]*LIFT+30);if(visS(s))labelPill(s.x,s.y,'Engine Shed',G.shop?'Cars for sale':null,'rgba(255,250,240,.94)','#3b342b',12);}
   for(const p of G.projects){if(p.done||!p.seen||p.site<0)continue;const D=projDef(p),x=p.site%MW,y=(p.site-x)/MW;const s=w2s(x*TS+H,y*TS-10,(G.tl[p.site]||0)*LIFT+44);if(!visS(s))continue;
     if(D.locked){labelPill(s.x,s.y,D.name,'Future update','rgba(110,110,110,.9)','#fff',12);continue;}
@@ -1156,10 +1176,10 @@ const GROUND={
   snow:{base:[[206,218,226],[216,226,233],[226,233,239],[234,240,244],[241,245,248],[247,250,251],[252,253,254]],tint:[[190,206,222],[255,255,255]],faces:[[120,128,138],[136,144,154],[108,116,126]],lip:[240,245,248],sand:[214,224,230],water:[[214,234,242],[184,214,230],[160,196,218]]},
 };
 function bakeTable(ri){
-  const RG=REGIONS[ri],key=RG.key,GD=GROUND[key],b=tb(ri),Wp=BW*TS,Hp=BH*TS;
+  const RG=REGIONS[ri],key=RG.key,GD=GROUND[key],b=tb(ri),bw=b.w,bh=b.h,Wp=bw*TS,Hp=bh*TS;
   const Lg=new Int8Array(Wp*Hp),Wt=new Float32Array(Wp*Hp);
-  const hAt=(tx,ty)=>G.h[idx(b.x0+clamp(tx,0,BW-1),b.y0+clamp(ty,0,BH-1))];
-  const wAt=(tx,ty)=>G.terr[idx(b.x0+clamp(tx,0,BW-1),b.y0+clamp(ty,0,BH-1))]===1?1:0;
+  const hAt=(tx,ty)=>G.h[idx(b.x0+clamp(tx,0,bw-1),b.y0+clamp(ty,0,bh-1))];
+  const wAt=(tx,ty)=>G.terr[idx(b.x0+clamp(tx,0,bw-1),b.y0+clamp(ty,0,bh-1))]===1?1:0;
   let maxL=0;
   for(let py=0;py<Hp;py++){const fy=py/TS-.5,j0=Math.floor(fy);let ty=fy-j0;ty=ty*ty*(3-2*ty);
     for(let px=0;px<Wp;px++){const fx=px/TS-.5,i0=Math.floor(fx);let tx=fx-i0;tx=tx*tx*(3-2*tx);
@@ -1169,14 +1189,14 @@ function bakeTable(ri){
       const k=py*Wp+px;let l=Math.floor(v+.5);if(w>.5){let wl=99;for(const[a1,b1]of[[i0,j0],[i0+1,j0],[i0,j0+1],[i0+1,j0+1]])if(wAt(a1,b1))wl=Math.min(wl,hAt(a1,b1));l=Math.min(l,wl);}
       Lg[k]=l;Wt[k]=w;if(l>maxL)maxL=l;}}
   // farm fields (meadow) on free flat tile blocks
-  const field=new Int8Array(BW*BH).fill(-1);
-  if(key==='meadow'||key==='autumn'){let fid=0;for(let ty=1;ty<BH-2;ty+=3)for(let tx=1;tx<BW-3;tx+=4){if(hash(tx,ty,ri+77)>(key==='meadow'?.26:.14))continue;let ok=true;const l0=hAt(tx,ty);
+  const field=new Int8Array(bw*bh).fill(-1);
+  if(key==='meadow'||key==='autumn'){let fid=0;for(let ty=1;ty<bh-2;ty+=3)for(let tx=1;tx<bw-3;tx+=4){if(hash(tx,ty,ri+77)>(key==='meadow'?.26:.14))continue;let ok=true;const l0=hAt(tx,ty);
     for(let y=ty;y<ty+2&&ok;y++)for(let x=tx;x<tx+3;x++){const i=idx(b.x0+x,b.y0+y);if(G.terr[i]||G.tree[i]||G.own[i]!==-1||G.res[i]||G.track[i]||G.bp[i]||G.h[i]!==l0){ok=false;break;}}
-    if(ok){for(let y=ty;y<ty+2;y++)for(let x=tx;x<tx+3;x++){field[y*BW+x]=fid;}fid++;}}}
+    if(ok){for(let y=ty;y<ty+2;y++)for(let x=tx;x<tx+3;x++){field[y*bw+x]=fid;}fid++;}}}
   const FCOL=[[[214,186,96],[196,166,80]],[[150,110,70],[128,92,58]],[[132,170,70],[112,152,60]],[[226,200,110],[206,178,92]]];
   const fas=hexRGB('#5e4029'),fas2=hexRGB(RG.accent);
   const SH=TS+maxL*LIFT+THICK+4,strips=[];
-  for(let ty=0;ty<BH;ty++){
+  for(let ty=0;ty<bh;ty++){
     const can=document.createElement('canvas');can.width=Wp;can.height=SH;const cx=can.getContext('2d'),img=cx.createImageData(Wp,SH),D=img.data;
     const top=ty*TS-maxL*LIFT-2;
     const put=(px,s,r,g,bb)=>{if(s<0||s>=SH)return;const o=(s*Wp+px)*4;D[o]=r;D[o+1]=g;D[o+2]=bb;D[o+3]=255;};
@@ -1191,8 +1211,8 @@ function bakeTable(ri){
       }else{
         const bc=GD.base[Math.min(l,GD.base.length-1)],t0=GD.tint[0],t1=GD.tint[1],tf=clamp((n1-.5)*1.6,-.6,.6);
         r=bc[0];g=bc[1];bb=bc[2];if(tf<0){r+=(t0[0]-r)*-tf;g+=(t0[1]-g)*-tf;bb+=(t0[2]-bb)*-tf;}else{r+=(t1[0]-r)*tf;g+=(t1[1]-g)*tf;bb+=(t1[2]-bb)*tf;}
-        const tx=Math.floor(px/TS),tyy=Math.floor(gy/TS),fi=tx<BW&&tyy<BH?field[tyy*BW+tx]:-1;
-        if(fi>=0&&w<.3){const fx=px-(tx%1)*0,inset=(px%TS<2&&field[tyy*BW+tx-1]!==fi)||(px%TS>TS-3&&field[tyy*BW+tx+1]!==fi)||(gy%TS<2&&(tyy<1||field[(tyy-1)*BW+tx]!==fi))||(gy%TS>TS-3&&field[(tyy+1)*BW+tx]!==fi);
+        const tx=Math.floor(px/TS),tyy=Math.floor(gy/TS),fi=tx<bw&&tyy<bh?field[tyy*bw+tx]:-1;
+        if(fi>=0&&w<.3){const fx=px-(tx%1)*0,inset=(px%TS<2&&field[tyy*bw+tx-1]!==fi)||(px%TS>TS-3&&field[tyy*bw+tx+1]!==fi)||(gy%TS<2&&(tyy<1||field[(tyy-1)*bw+tx]!==fi))||(gy%TS>TS-3&&field[(tyy+1)*bw+tx]!==fi);
           if(inset){r=70;g=110;bb=46;if(hf>.5){r-=12;g-=10;}}else{const fc=FCOL[(fi+ri)%FCOL.length],row=((fi%2?px:gy)>>1)%3===0;const c2=row?fc[1]:fc[0];r=c2[0]*(.94+n2*.12);g=c2[1]*(.94+n2*.12);bb=c2[2]*(.94+n2*.12);}}
         else{
           if(w>.25){const sf=(w-.25)/.25;const sd=GD.sand;r+=(sd[0]-r)*sf;g+=(sd[1]-g)*sf;bb+=(sd[2]-bb)*sf;if(hf>.9){r-=18;g-=18;bb-=18;}}
@@ -1537,7 +1557,8 @@ const COARSE=matchMedia('(pointer:coarse)').matches;
 const HINTS={
   select:COARSE?'Drag to look around, pinch to zoom. Tap a train to drive it, tap lamps to flip switches.':'Drag to look around, scroll to zoom. Click a train to drive it, click lamps to flip switches.',
   track:'Drag to lay yard track. You can only build inside the green zones around towns, industries and your depot.',
-  bulldoze:'Drag over yard track or trees to remove them. Main line track stays.',
+  station:'Click straight track beside a town or industry to build its station: a goods shed for towns (400) or a loading crane for industries (600).',
+  bulldoze:'Drag over yard track, stations or trees to remove them. Main line track stays.',
   tree:'Drag to plant trees, 5 coins each.',
 };
 let hintT=0;
@@ -1573,6 +1594,7 @@ function guide(){
   if(!G.g.coupled&&bes&&G.trains.some(t=>!hasEng(t)&&!t.ab))return{eb:'Getting started',t:'Couple up the cars',h:'Raise the throttle and creep Old Bessie into the cars parked on the siding. They couple when you touch them. Use Reverse to change direction.',focus:bes};
   for(const p of projOrder()){if(p.done||projDef(p).locked||!G.reg[projDef(p).ri])continue;const D=projDef(p);
     if(!p.seen)return{eb:'Explore',t:'Scout the line',h:`There is more to find on ${REGIONS[D.ri].name}. Drive along the main line (the Scout draisine is fast and sees far) to uncover what is out there.`};
+    const sn=stationNeed(p);if(sn)return{eb:`Job · ${D.name}`,t:`Build a station at the ${sn.o.name}`,h:`This job needs ${CARGO[sn.cargo].name.toLowerCase()}. Pick Station, then click the straight track beside the ${sn.o.name} to build a loading crane (${STATION_COST.ind} coins).`};
     return{eb:`Job · ${REGIONS[D.ri].name}`,t:D.name,h:`${D.phases.length>1?`Phase ${p.phase+1} of ${D.phases.length}: `:''}${D.phases[p.phase].label}. Stop loaded cars next to the orange sign to unload.`,p,src:srcLine(p),reward:D.reward,note:D.note};}
   return{eb:'All jobs done',t:'Free play',h:'Every open job is finished. Keep the towns supplied and grow your yards.'};
 }
@@ -1591,7 +1613,7 @@ function focusTile(i){const x=i%MW,y=(i-x)/MW;cam.x=x*TS+H;cam.y=y*TS-lev(x,y)*L
 // ---- jobs ----
 function projStatus(p){const D=projDef(p);if(p.done)return['Done',''];if(D.locked)return['Future update',''];if(!G.reg[D.ri])return['Region closed',''];if(!p.seen)return['Not found yet',''];return['Open','go'];}
 function openContracts(){
-  const regions=[0,1,2,3].filter(ri=>G.projects.some(p=>projDef(p).ri===ri)).map(ri=>{const ps=projOrder().filter(p=>projDef(p).ri===ri);
+  const regions=REGIONS.map((_,i)=>i).filter(ri=>G.projects.some(p=>projDef(p).ri===ri)).map(ri=>{const ps=projOrder().filter(p=>projDef(p).ri===ri);
     return`<div class="cregion"><h4><i style="background:${REGIONS[ri].accent}"></i>${esc(REGIONS[ri].name)}${G.reg[ri]?'':' · not reached yet'}</h4>${ps.map(p=>{const D=projDef(p),[st,cl]=projStatus(p),show=p.seen&&!D.locked&&G.reg[D.ri];
       const ph=D.phases.map((f,k)=>`<li class="${p.done||k<p.phase?'ok':k===p.phase&&show?'cur':''}">${esc(f.label)} <small>${Object.keys(f.need).map(c=>`${f.need[c]} ${(CARGO[c].short||CARGO[c].name).toLowerCase()}`).join(', ')}</small></li>`).join('');
       return`<div class="ccard ${p.done?'done':''} ${!show&&!p.done?'locked':''}"><div class="top"><b>${show||p.done?esc(D.name):'???'}</b><span class="tag ${cl}">${st}</span></div>
@@ -1659,9 +1681,9 @@ function indPanel(o){const D=IND[o.type],ks=Object.keys(o.stock).filter(k=>o.sto
   return`<div class="ph"><div class="grow"><div class="ttl">${esc(o.name)}</div><div class="sub">${esc(REGIONS[o.ri].name)}</div></div><button class="x" data-a="close" aria-label="Close">✕</button></div><p class="help" style="margin:0 0 8px">${esc(D.desc)}</p>
   <div class="sect">Ready to load</div><div class="chips">${ks.length?ks.map(k=>`<span class="chip"><i style="background:${CARGO[k].col}"></i>${CARGO[k].name} ${o.stock[k]}</span>`).join(''):'<span class="empty">Nothing yet</span>'}</div>
   ${D.in?`<div class="sect">Delivered ${CARGO[D.in].name.toLowerCase()}</div><div class="chips"><span class="chip"><i style="background:${CARGO[D.in].col}"></i>${o.inp}</span></div>`:''}
-  ${D.stock?`<p class="tip">This stockpile does not refill. Spend it on the jobs that need it.</p>`:''}`;}
+  ${D.stock?`<p class="tip">This stockpile does not refill. Spend it on the jobs that need it.</p>`:''}${o.dock?'':`<p class="tip"><b>No station yet.</b> Pick Station and click the straight track beside it to build a loading crane (${STATION_COST.ind} coins).</p>`}`;}
 function townPanel(t){return`<div class="ph"><div class="grow"><div class="ttl">${esc(t.name)}</div><div class="sub">${LEVELS[t.lvl].name} · ${fmt(t.pop)} people</div></div><button class="x" data-a="close" aria-label="Close">✕</button></div>
-  <p class="help" style="margin:0">Stop cars at the goods shed to sell. Towns grow as you supply them.</p><div class="sect">Buys</div><div class="chips">${Object.keys(TOWN_BUY).map(k=>`<span class="chip"><i style="background:${CARGO[k].col}"></i>${CARGO[k].name} · ${TOWN_BUY[k]} each</span>`).join('')}</div>`;}
+  <p class="help" style="margin:0">${t.dock?'Stop cars at the goods shed to sell. Towns grow as you supply them.':`No station yet. Pick Station and click straight track beside the town to build a goods shed (${STATION_COST.town} coins).`}</p><div class="sect">Buys</div><div class="chips">${Object.keys(TOWN_BUY).map(k=>`<span class="chip"><i style="background:${CARGO[k].col}"></i>${CARGO[k].name} · ${TOWN_BUY[k]} each</span>`).join('')}</div>`;}
 function projPanel(p){const D=projDef(p);
   return`<div class="ph"><div class="grow"><div class="ttl">${esc(D.name)}</div><div class="sub">${esc(REGIONS[D.ri].name)} · reward ${fmt(D.reward)}</div></div><button class="x" data-a="close" aria-label="Close">✕</button></div><p class="help" style="margin:0 0 6px">${esc(D.note)}</p>
   <ol class="phases">${D.phases.map((f,k)=>`<li class="${p.done||k<p.phase?'ok':k===p.phase?'cur':''}">${esc(f.label)}</li>`).join('')}</ol>
@@ -1708,7 +1730,8 @@ function clickAt(tp){if(EDIT){edClick(tp);return;}
 function toolDown(tp){if(EDIT){edDown(tp);return;}if(!inMap(tp.x,tp.y))return;if(tool==='track')TD={tiles:[[tp.x,tp.y]],plan:null};else{TD={done:new Set(),err:false};applyTile(tp);}}
 function applyTile(tp){
   if(!inMap(tp.x,tp.y))return;const k=idx(tp.x,tp.y);if(TD.done.has(k))return;TD.done.add(k);let r=false;
-  if(tool==='bulldoze')r=bulldozeAt(tp.x,tp.y);else if(tool==='tree')r=plantAt(tp.x,tp.y);
+  if(tool==='station'){r=buildStation(tp.x,tp.y,false);if(r&&r.o){const o=r.o,m=o.dock[1];burst(m[0]*TS+H,m[1]*TS+H-lev(m[0],m[1])*LIFT,10,'230,220,200',50,{r:3,gr:7,kind:'',a:.8});fxText(m[0]*TS+H,m[1]*TS+H-lev(m[0],m[1])*LIFT-14,'-'+fmt(r.cost),'#ffd54a');Snd.build(6);toast(`Station built at ${o.name}.`,'',2.4);renderGoal(true);r=true;}}
+  else if(tool==='bulldoze'){if(DOCK.has(k)){const o=removeStationAt(tp.x,tp.y);if(o){HOOK.dust(tp.x,tp.y);toast(`Removed the station at ${o.name}.`,'',2);r=true;}}else r=bulldozeAt(tp.x,tp.y);}else if(tool==='tree')r=plantAt(tp.x,tp.y);
   if(typeof r==='string'&&!TD.err){TD.err=true;errToast(r);}
 }
 function toolMove(tp){
@@ -1724,7 +1747,7 @@ window.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'&&e.target.type!=='range'||e.target.tagName==='SELECT')return;const k=e.key.toLowerCase();
   if(k==='escape'){if(modalOpen)closeModal();else if(tool!=='select')setTool('select');else closePanel();return;}if(modalOpen)return;
   if(k===' '){e.preventDefault();if(G.speed){G.prevSpeed=G.speed;setSpeed(0);}else setSpeed(G.prevSpeed||1);return;}
-  const tlist=['select','track','bulldoze','tree','fleet'];if(/^[1-5]$/.test(k)){setTool(tlist[+k-1]);return;}if(k==='j'){openContracts();return;}
+  const tlist=['select','track','station','bulldoze','tree','fleet'];if(/^[1-6]$/.test(k)){setTool(tlist[+k-1]);return;}if(k==='j'){openContracts();return;}
   const t=selTrain();
   if(t&&hasEng(t)&&!t.ab){
     if(k==='w'||k==='arrowup'){t.thr=clamp(t.thr+.1,0,1);t.brk=false;if(!FOLLOW)FOLLOW=t.id;e.preventDefault();updatePanel(true);return;}
@@ -1769,51 +1792,84 @@ const decG=(s,T,off)=>{const a=new T(N);for(let i=0;i<N&&i<s.length;i++)a[i]=B64
 function hashStr(s){let h=2166136261;for(let i=0;i<(s||'').length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function serializeLayout(name){
   const grid={};for(const k in GRIDS)grid[k]=encG(G[k],GRIDS[k][1]);
-  return{fmt:'puffwood-layout',v:1,name:name||G.layoutName||'My tables',money:G.money,reg:G.reg.slice(),rnames:(G.rnames||REGIONS.map(r=>r.name)).slice(),camStart:G.camStart||null,grid,
-    towns:G.towns.map(t=>({name:t.name,x:t.x,y:t.y,ri:t.ri,pop:t.pop,dock:t.dock,houses:t.houses.map(h=>({x:h.x,y:h.y,c:h.c,r:h.r,s:+(h.s||1).toFixed(2),hall:!!h.hall}))})),
-    inds:G.inds.map(o=>({type:o.type,x:o.x,y:o.y,ri:o.ri,dock:o.dock})),depot:G.depot?G.depot.tiles:null,
+  return{fmt:'puffwood-layout',v:1,name:name||G.layoutName||'My tables',money:G.money,reg:G.reg.slice(),tables:curTables(),camStart:G.camStart||null,grid,
+    towns:G.towns.map(t=>({name:t.name,x:t.x,y:t.y,ri:t.ri,pop:t.pop,dock:t.dock||null,houses:t.houses.map(h=>({x:h.x,y:h.y,c:h.c,r:h.r,s:+(h.s||1).toFixed(2),hall:!!h.hall}))})),
+    inds:G.inds.map(o=>({type:o.type,x:o.x,y:o.y,ri:o.ri,dock:o.dock||null})),depot:G.depot?G.depot.tiles:null,
     pdefs:G.pdefs,projects:G.projects.map(p=>({id:p.id,site:p.site})),
     trains:G.trains.map(t=>({name:t.name,ab:!!t.ab,hp:+t.hp.toFixed(2),segs:t.segs.map(s=>({x:s.x,y:s.y,p:s.p,d:s.d})),veh:t.veh.map(v=>v.kind==='eng'?{kind:'eng',e:v.e,color:v.color,flip:!!v.flip,name:v.name}:{kind:'car',t:v.t,c:v.c||null,n:v.n||0})}))};
 }
 function recomputeOwnRes(){
   G.own.fill(-1);G.res.fill(0);
-  G.towns.forEach((t,ti)=>{for(const h of t.houses)G.own[idx(h.x,h.y)]=1000+ti;for(const[x,y]of t.dock)if(inMap(x,y))G.res[idx(x,y)]=1;});
-  G.inds.forEach((o,ii)=>{for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++)G.own[idx(o.x+dx,o.y+dy)]=2000+ii;for(const[x,y]of o.dock)if(inMap(x,y))G.res[idx(x,y)]=1;});
+  G.towns.forEach((t,ti)=>{for(const h of t.houses)G.own[idx(h.x,h.y)]=1000+ti;for(const[x,y]of t.dock||[])if(inMap(x,y))G.res[idx(x,y)]=1;});
+  G.inds.forEach((o,ii)=>{for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++)G.own[idx(o.x+dx,o.y+dy)]=2000+ii;for(const[x,y]of o.dock||[])if(inMap(x,y))G.res[idx(x,y)]=1;});
   if(G.depot)for(const[x,y]of G.depot.tiles)G.res[idx(x,y)]=1;
   G.buildVer++;
 }
 function buildFromLayout(L){
   if(!L||L.fmt!=='puffwood-layout')throw new Error('Not a Puffwood layout');
-  G=baseG(hashStr(L.name));G.layoutName=L.name;G.money=L.money??3000;G.reg=(L.reg||[true,false,false,false]).slice();G.rnames=(L.rnames||REGIONS.map(r=>r.name)).slice();
+  setTables(L.tables||DEFAULT_TABLES());if(!L.tables&&L.rnames)L.rnames.forEach((n,i)=>{if(n&&REGIONS[i])REGIONS[i].name=n;});
+  G=baseG(hashStr(L.name));G.layoutName=L.name;G.money=L.money??3000;G.reg=REGIONS.map((_,i)=>L.reg?!!L.reg[i]:i===0);if(!G.reg.some(Boolean))G.reg[0]=true;
   G.pdefs=JSON.parse(JSON.stringify(L.pdefs||{}));
   for(const k in GRIDS)G[k]=L.grid&&L.grid[k]?decG(L.grid[k],GRIDS[k][0],GRIDS[k][1]):new GRIDS[k][0](N).fill(k==='bpP'?-1:0);
   for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)if(tableOf(x,y)<0){const i=idx(x,y);G.terr[i]=3;G.h[i]=FLOOR_L;}
-  G.towns=(L.towns||[]).map(t=>({x:t.x,y:t.y,name:t.name,pop:t.pop||120,lvl:0,ri:t.ri,dock:t.dock.map(d=>d.slice()),seen:false,houses:(t.houses||[]).map(h=>({...h,born:-99}))}));
+  G.towns=(L.towns||[]).map(t=>({x:t.x,y:t.y,name:t.name,pop:t.pop||120,lvl:0,ri:t.ri,dock:t.dock?t.dock.map(d=>d.slice()):null,seen:false,houses:(t.houses||[]).map(h=>({...h,born:-99}))}));
   for(const t of G.towns){if(!t.houses.length)t.houses.push({x:t.x,y:t.y,hall:true,c:0,r:0,s:1,born:-99});t.lvl=townLevel(t.pop);}
-  G.inds=(L.inds||[]).map(o=>{const D=IND[o.type];return{type:o.type,x:o.x,y:o.y,ri:o.ri,name:D.name,stock:D.stock?Object.assign({},D.stock):{},inp:0,acc:0,dock:o.dock.map(d=>d.slice()),seen:false};});
+  G.inds=(L.inds||[]).map(o=>{const D=IND[o.type];return{type:o.type,x:o.x,y:o.y,ri:o.ri,name:D.name,stock:D.stock?Object.assign({},D.stock):{},inp:0,acc:0,dock:o.dock?o.dock.map(d=>d.slice()):null,seen:false};});
   G.depot=L.depot?{tiles:L.depot.map(d=>d.slice())}:null;
   recomputeOwnRes();
   G.projects=(L.projects||[]).map((p,i)=>({id:p.id,idx:i,phase:0,prog:{},done:false,tiles:[],site:p.site??-1,seen:false}));
   for(let i=0;i<N;i++){if(G.bp[i]&&G.projects[G.bpP[i]])G.projects[G.bpP[i]].tiles.push(i);else if(G.bp[i]){G.bp[i]=0;G.bpP[i]=-1;}G.pieces+=pieceCount(G.track[i]);}
   G.trains=(L.trains||[]).map(t=>({id:G.nid++,name:t.name,veh:JSON.parse(JSON.stringify(t.veh)),segs:t.segs.map(s=>({...s})),hp:t.hp,v:0,thr:0,brk:false,ab:!!t.ab,odo:0}));
   applyNames();
-  const dm=G.depot?G.depot.tiles[Math.min(3,G.depot.tiles.length-1)]:[Math.floor(BW/2),Math.floor(BH/2)];
+  const dm=G.depot?G.depot.tiles[Math.min(3,G.depot.tiles.length-1)]:[REGIONS[0].x0+(REGIONS[0].w>>1),REGIONS[0].y0+(REGIONS[0].h>>1)];
   G.camStart=L.camStart||{x:dm[0]*TS+H,y:dm[1]*TS};
   if(G.depot)revealAround(dm[0],dm[1],6,true);
   for(const t of G.trains){if(t.ab)continue;const e=t.veh.find(v=>v.kind==='eng');if(!e)continue;const h=pointBehind(t,0);revealAround(Math.floor(h.x/TS),Math.floor(h.y/TS),ENGINES[e.e].reveal,true);}
   rebuildDocks();computeZones();checkDiscover(true);
   return G;
 }
-function blankLayout(){
-  const keep=G;G=baseG(1);G.pdefs={};
+function blankLayout(tables){
+  const keep=G,keepT=curTables();setTables(tables||DEFAULT_TABLES());G=baseG(1);G.pdefs={};
   for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const i=idx(x,y),ri=tableOf(x,y);if(ri<0){G.terr[i]=3;G.h[i]=FLOOR_L;}else G.h[i]=1;}
-  const L=serializeLayout('Blank tables');L.reg=[true,false,false,false];G=keep;return L;
+  const L=serializeLayout('Blank tables');L.reg=REGIONS.map((_,i)=>i===0);G=keep;setTables(keepT);return L;
 }
-function randomLayout(){const keep=G;newGameRandom();const L=serializeLayout('Random tables');G=keep;return L;}
+function randomLayout(){const keep=G,keepT=curTables();newGameRandom();const L=serializeLayout('Random tables');G=keep;setTables(keepT);return L;}
 function newGameRandom(seed){const s=(seed??Math.floor(Math.random()*1e9))>>>0;for(let a=0;a<60;a++){let ok=false;try{ok=genWorld((s+a*7919)>>>0);}catch(e){ok=false;}if(ok)return;}throw new Error('Could not generate a layout');}
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}},del(k){try{localStorage.removeItem(k);}catch(e){}}};
 function activeLayout(){return LS.get('pj-active-layout',null)||(typeof DEFAULT_LAYOUT!=='undefined'?DEFAULT_LAYOUT:null);}
 function newGame(){const L=activeLayout();if(L){try{buildFromLayout(L);return;}catch(e){console.warn('layout',e);}}newGameRandom();}
+// ---- stations: built by the player on straight track beside a town or industry ----
+const STATION_COST={town:400,ind:600};
+function stationAt(x,y){
+  if(!inMap(x,y))return{err:'Click on track.'};const i=idx(x,y),m=G.track[i];
+  if(!m)return{err:'Stations go on straight track beside a town or industry.'};
+  if((m!==1&&m!==2)||G.tk[i])return{err:'Stations need plain straight track: no junctions, bridges or tunnels.'};
+  const hz=m===2,tiles=[];
+  for(const k of[-1,0,1]){const X=hz?x+k:x,Y=hz?y:y+k;if(!inMap(X,Y))return{err:'A station needs 3 straight tiles in a row.'};const j=idx(X,Y);
+    if(G.track[j]!==m||G.tk[j]||G.tl[j]!==G.tl[i])return{err:'A station needs 3 straight, level tiles of track in a row.'};if(DOCK.has(j))return{err:'There’s already a station here.'};tiles.push([X,Y]);}
+  const ri=tableOf(x,y);let best=null,bd=1e9;
+  const dist=(o,isInd)=>{let d=1e9;for(const[X,Y]of tiles){if(isInd){const dx=Math.max(o.x-X,0,X-(o.x+1)),dy=Math.max(o.y-Y,0,Y-(o.y+1));d=Math.min(d,Math.max(dx,dy));}else for(const hh of o.houses)d=Math.min(d,Math.max(Math.abs(hh.x-X),Math.abs(hh.y-Y)));}return d;};
+  G.inds.forEach((o,k)=>{if(o.ri!==ri||(!EDIT&&!o.seen))return;const d=dist(o,true);if(d<=3&&d<bd){bd=d;best={k:'ind',i:k};}});
+  G.towns.forEach((o,k)=>{if(o.ri!==ri||(!EDIT&&!o.seen))return;const d=dist(o,false)+.5;if(d<=3.5&&d<bd){bd=d;best={k:'town',i:k};}});
+  if(!best)return{tiles,err:'Build a station within 3 tiles of a town or industry.'};
+  const o=best.k==='ind'?G.inds[best.i]:G.towns[best.i];
+  if(o.dock)return{tiles,target:best,err:`${o.name} already has a station. Remove it first to move it.`};
+  return{tiles,target:best,o,cost:STATION_COST[best.k]};
+}
+function buildStation(x,y,free){
+  if(!EDIT&&inMap(x,y)&&!G.seen[idx(x,y)])return'You haven’t explored there yet.';
+  const r=stationAt(x,y);if(r.err)return r.err;const cost=free?0:r.cost;if(G.money<cost)return'Not enough coins.';
+  G.money-=cost;r.o.dock=r.tiles;recomputeOwnRes();rebuildDocks();G.buildVer++;return r;
+}
+function removeStationAt(x,y){const d=inMap(x,y)&&DOCK.get(idx(x,y));if(!d)return false;const o=d.k==='ind'?G.inds[d.i]:G.towns[d.i];
+  o.dock=null;recomputeOwnRes();rebuildDocks();G.buildVer++;if(!EDIT)G.money+=STATION_COST[d.k]/2;return o;}
+function stationNeed(p){
+  const need=curNeed(p);
+  for(const c of Object.keys(need)){if((p.prog[c]||0)>=need[c])continue;const chain=c==='slabs'?['gravel','slabs']:c==='planks'?['logs','planks']:[c];
+    for(const cc of chain){const srcs=G.inds.filter(o=>(CARGO_SRC[cc]||[]).includes(o.type)&&G.reg[o.ri]&&o.seen);if(srcs.length&&!srcs.some(o=>o.dock))return{o:srcs[0],cargo:cc};}}
+  return null;
+}
+
 // ---- checks that keep hand-built tables playable ----
 const CARGO_SRC={logs:['woodlot','lumber'],gravel:['gravel'],slabs:['cement'],planks:['sawmill'],rails:['railyard'],beams:['railyard']};
 const CARGO_CAR={logs:'logcar',gravel:'hopper',planks:'flatcar',slabs:'flatcar',rails:'flatcar',beams:'flatcar'};
@@ -1826,12 +1882,13 @@ function validateLayout(){
   if(!engs.length)E('No working engine that can pull cars. Place Old Bessie or another engine.',null);
   for(const t of G.trains)for(const s of t.segs.slice(0,Math.max(1,Math.ceil(trainLen(t)/TS)+1)))if(!((G.track[t2i(s.x,s.y)]|(t.ab?G.bp[t2i(s.x,s.y)]:0))&(1<<s.p))){E(`${t.name} is not sitting on track.`,t2i(s.x,s.y));break;}
   const dockOk=(dock,name)=>{const hz=dock[0][1]===dock[1][1];for(const[x,y]of dock){if(!inMap(x,y)){E(`${name}'s dock runs off the map.`,null);return;}const m=G.track[t2i(x,y)]|G.bp[t2i(x,y)];if(!(m&(1<<(hz?1:0)))){E(`${name}'s loading dock needs straight track along all three dock tiles.`,t2i(x,y));return;}}};
-  G.towns.forEach(t=>dockOk(t.dock,t.name));G.inds.forEach(o=>dockOk(o.dock,o.name));
+  G.towns.forEach(t=>t.dock&&dockOk(t.dock,t.name));G.inds.forEach(o=>o.dock&&dockOk(o.dock,o.name));
+  const nearReach=(cx,cy,r)=>{for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(inMap(cx+dx,cy+dy)&&reach.has(t2i(cx+dx,cy+dy)))return true;return false;};
   // connectivity with every job finished
   const M=i=>G.track[i]|G.bp[i],reach=new Set();
   if(G.depot){const st=[t2i(...G.depot.tiles[0])];reach.add(st[0]);while(st.length){const i=st.pop(),x=i%MW,y=(i-x)/MW,m=M(i);for(let e=0;e<4;e++){if(!edgeHas(m,e))continue;const nx=x+DX[e],ny=y+DY[e];if(!inMap(nx,ny))continue;const j=t2i(nx,ny);if(reach.has(j)||!edgeHas(M(j),(e+2)&3))continue;reach.add(j);st.push(j);}}
-    for(const t of G.towns)if(!t.dock.some(([x,y])=>reach.has(t2i(x,y))))E(`${t.name} can't be reached from the depot, even with every job done.`,t2i(...t.dock[1]),'warn');
-    for(const o of G.inds)if(!o.dock.some(([x,y])=>reach.has(t2i(x,y))))E(`The ${o.name} can't be reached from the depot, even with every job done.`,t2i(...o.dock[1]),'warn');}
+    for(const t of G.towns)if(!nearReach(t.x,t.y,4))E(`No track runs near ${t.name} (or it can’t be reached from the depot), so no station can serve it.`,t2i(t.x,t.y),'warn');
+    for(const o of G.inds)if(!nearReach(o.x,o.y,3)&&!nearReach(o.x+1,o.y+1,3))E(`No track runs near the ${o.name} (or it can’t be reached from the depot), so no station can serve it.`,t2i(o.x,o.y),'warn');}
   // regions & jobs
   const openable=new Set(G.reg.map((o,i)=>o?i:-1).filter(i=>i>=0));for(const p of G.projects){const D=projDef(p);if(D.gate!=null&&!D.locked)openable.add(D.gate);}
   const haveInd=new Set(G.inds.filter(o=>openable.has(o.ri)).map(o=>o.type)),startCars=new Set(G.trains.flatMap(t=>t.veh.filter(v=>v.kind==='car').map(v=>v.t)));
@@ -1860,13 +1917,14 @@ function validateLayout(){
 const ED_TOOLS=[
   ['View',[['pan','Look','M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20'],['select','Select','M6 3l12 7-5.5 1.6L10 18z']]],
   ['Land',[['raise','Raise','M4 18l6-8 4 5 2-3 4 6zM12 3v5M9.5 5.5L12 3l2.5 2.5'],['lower','Lower','M4 18l6-8 4 5 2-3 4 6zM12 8V3M9.5 5.5L12 8l2.5-2.5'],['flatten','Flatten','M3 15h18M5 11h14M8 7h8'],['smooth','Smooth','M3 15c4-6 6 4 9-2s5 2 9-3'],['water','Water','M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z'],['land','Dry land','M3 18h18M6 18l3-7 3 4 3-6 3 9'],['trees','Trees','M12 22v-5M12 2l6 8h-3l4 6H5l4-6H6z'],['rocks','Rocks','M4 18l3-7 5-3 5 4 3 6z']]],
-  ['Rail',[['track','Main line','M8 3v18M16 3v18M5 6.5h14M5 12h14M5 17.5h14'],['blueprint','Blueprint','M8 3v18M16 3v18M5 6.5h3M16 6.5h3M5 12h3M16 12h3M5 17.5h3M16 17.5h3'],['site','Job site','M6 21V4M6 4h11l-2 4 2 4H6'],['erase','Erase','M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13']]],
+  ['Tables',[['tables','Tables','M3 6h8v6H3zM13 6h8v6h-8zM3 14h8v6H3zM13 14h8v6h-8z']]],
+  ['Rail',[['track','Main line','M8 3v18M16 3v18M5 6.5h14M5 12h14M5 17.5h14'],['blueprint','Blueprint','M8 3v18M16 3v18M5 6.5h3M16 6.5h3M5 12h3M16 12h3M5 17.5h3M16 17.5h3'],['station','Station','M3 10l9-6 9 6M5 10v10h14V10M10 20v-5h4v5'],['site','Job site','M6 21V4M6 4h11l-2 4 2 4H6'],['erase','Erase','M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13']]],
   ['Places',[['town','Town','M3 10l9-6 9 6M5 10v10h14V10M10 20v-5h4v5'],['industry','Industry','M3 21V9l6 4V9l6 4V5h6v16z'],['depot','Depot','M3 10l9-6 9 6v11H3zM8 21v-7h8v7'],['train','Rolling stock','M5 3h14v13H5zM5 9.5h14M8 20l-2 2M16 20l2 2']]],
 ];
-const ED_HELP={pan:'Drag to move around. Scroll or pinch to zoom.',select:'Click towns, industries, trains or jobs to edit them.',raise:'Drag to raise the ground one level.',lower:'Drag to lower the ground one level.',flatten:'Drag to level the ground to where you started.',smooth:'Drag to soften hills and valleys.',
+const ED_HELP={tables:'Drag a table to move it, or drag its edges to resize it. Rename, restyle, add or remove tables in the panel.',station:'Click straight track beside a town or industry to pre-build its station. Click a station to remove it. Players can build their own in the game.',pan:'Drag to move around. Scroll or pinch to zoom.',select:'Click towns, industries, trains or jobs to edit them.',raise:'Drag to raise the ground one level.',lower:'Drag to lower the ground one level.',flatten:'Drag to level the ground to where you started.',smooth:'Drag to soften hills and valleys.',
   water:'Paint rivers and lakes.',land:'Paint water back into dry land.',trees:'Paint trees that suit the table.',rocks:'Paint rocks. Use Erase to clear trees and rocks.',
   track:'Drag to lay fixed main line. It climbs one level per tile, bridges low ground and tunnels hills. Drag across the gap between tables for a bridge.',blueprint:'Drag to draw broken track that a job rebuilds. Choose the job first.',site:'Click where trains deliver this job’s materials. Put it beside real track.',
-  erase:'Drag to remove track, blueprints and trees. Click a town, industry, train or the depot to delete it.',town:'Click to place a town hall. Its goods shed (3 tiles) sits on the chosen side.',industry:'Click to place a 2×2 industry. Its loading dock sits on the chosen side.',depot:'Click to place the 6-tile engine shed siding.',train:'Click track to place rolling stock. Click a train again to turn it around.'};
+  erase:'Drag to remove track, blueprints and trees. Click a town, industry, train or the depot to delete it.',town:'Click to place a town. Players build its station themselves.',industry:'Click to place a 2×2 industry. Players build its loading station themselves.',depot:'Click to place the 6-tile engine shed siding.',train:'Click track to place rolling stock. Click a train again to turn it around.'};
 const TOWN_NAMES=['Clovermead','Hayford','Buttercup Green','Maplewood','Acorn Hollow','Ember Glen','Sunmesa','Coyote Flats','Dustwell','Frostholm','Pinecrest','Snowbell','Thistledown','Larkspur','Millbrook','Oakhurst'];
 const E_=(e,name)=>({kind:'eng',e,color:ENGINES[e].color,flip:false,name});
 const PRESETS={shunter:{label:'Old Bessie (yard switcher)',veh:()=>[{kind:'eng',e:'shunter',color:ENGINES.shunter.color,flip:false,name:'Old Bessie'}]},
@@ -1886,7 +1944,7 @@ function openEditor(L){
   buildFromLayout(L);G.seen.fill(1);for(const o of[...G.towns,...G.inds,...G.projects])o.seen=true;G.speed=0;
   EDIT=ED={tool:'pan',r:0,side:2,indType:'woodlot',preset:'shunter',proj:G.projects.length?0:-1,townSize:120,name:L.name,issues:[],dirty:new Set(),sel:null,lastBake:0};
   document.body.classList.add('editing');rowVer='';
-  for(let ri=0;ri<4;ri++){BAKE[ri]=null;bakeTable(ri);}
+  BAKE.length=0;for(let ri=0;ri<REGIONS.length;ri++){bakeTable(ri);}bakeFloor();resize();
   if(!document.getElementById('edRoot'))buildEdUI();$('#edRoot').classList.remove('hidden');$('#edName').value=ED.name;
   cam.z=clamp(.8,minZoom(),4);const cs=G.camStart;cam.x=cs.x;cam.y=cs.y;clampCam();
   edSetTool('pan');edDraft();
@@ -1911,14 +1969,17 @@ function projSelect(){return`<div class="sect">Job</div><select id="edProj">${G.
 function edOpts(){
   const t=ED.tool,o=$('#edOpts');let h=`<div class="edH">${esc((ED_TOOLS.flatMap(g=>g[1]).find(x=>x[0]===t)||[])[1]||'')}</div><p class="tip">${ED_HELP[t]||''}</p>`;
   if(['raise','lower','flatten','smooth','water','land','trees','rocks','erase'].includes(t))h+=`<div class="sect">Brush</div><div class="seg2">${[0,1,2].map(r=>`<button data-r="${r}" class="${ED.r===r?'on':''}">${['Small','Medium','Large'][r]}</button>`).join('')}</div>`;
+  if(t==='tables')h+=tablesPanel();
+  if(t==='track'||t==='blueprint')h+=`<div class="sect">Crossing gaps between tables</div><div class="seg2">${[['bridge','Bridge'],['tunnel','Tunnel']].map(([v,n])=>`<button data-gap="${v}" class="${(ED.gapKind||'bridge')===v?'on':''}">${n}</button>`).join('')}</div>`;
   if(t==='blueprint'||t==='site')h+=G.projects.length?projSelect():`<p class="tip">No jobs yet.</p><div class="row"><button class="btn primary" data-a="newjob">New job</button></div>`;
-  if(t==='town')h+=`<div class="sect">Name</div><input id="edTown" value="${esc(nextTownName())}"><div class="sect">Size</div><div class="seg2">${[[120,'Hamlet'],[300,'Village'],[700,'Town']].map(([v,n])=>`<button data-size="${v}" class="${ED.townSize===v?'on':''}">${n}</button>`).join('')}</div>`+sideBtns();
-  if(t==='industry')h+=`<div class="sect">Type</div><select id="edInd">${Object.keys(IND).map(k=>`<option value="${k}" ${ED.indType===k?'selected':''}>${IND[k].name}</option>`).join('')}</select><p class="tip">${esc(IND[ED.indType].desc)}</p>`+sideBtns();
+  if(t==='town')h+=`<div class="sect">Name</div><input id="edTown" value="${esc(nextTownName())}"><div class="sect">Size</div><div class="seg2">${[[120,'Hamlet'],[300,'Village'],[700,'Town']].map(([v,n])=>`<button data-size="${v}" class="${ED.townSize===v?'on':''}">${n}</button>`).join('')}</div>`;
+  if(t==='industry')h+=`<div class="sect">Type</div><select id="edInd">${Object.keys(IND).map(k=>`<option value="${k}" ${ED.indType===k?'selected':''}>${IND[k].name}</option>`).join('')}</select><p class="tip">${esc(IND[ED.indType].desc)}</p>`;
   if(t==='depot')h+=`<div class="sect">Direction</div><div class="seg2">${[[2,'East–west'],[0,'North–south']].map(([v,n])=>`<button data-side="${v}" class="${(ED.side===2||ED.side===3?2:0)===v?'on':''}">${n}</button>`).join('')}</div>`;
   if(t==='train')h+=`<div class="sect">Stock</div><select id="edPreset">${Object.keys(PRESETS).map(k=>`<option value="${k}" ${ED.preset===k?'selected':''}>${PRESETS[k].label}</option>`).join('')}</select>`;
   if(t==='select')h+=edSelHtml();
   o.innerHTML=h;
   o.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ED.r=+b.dataset.r;edOpts();});
+  o.querySelectorAll('[data-gap]').forEach(b=>b.onclick=()=>{ED.gapKind=b.dataset.gap;edOpts();});if(t==='tables')wireTables(o);
   o.querySelectorAll('[data-side]').forEach(b=>b.onclick=()=>{ED.side=+b.dataset.side;edOpts();});
   o.querySelectorAll('[data-size]').forEach(b=>b.onclick=()=>{ED.townSize=+b.dataset.size;edOpts();});
   const q=s=>o.querySelector(s);if(q('#edProj'))q('#edProj').onchange=e=>{ED.proj=+e.target.value;};if(q('#edInd'))q('#edInd').onchange=e=>{ED.indType=e.target.value;edOpts();};if(q('#edPreset'))q('#edPreset').onchange=e=>{ED.preset=e.target.value;};
@@ -1977,26 +2038,26 @@ function edClickErase(tp){
   if(G.depot&&G.depot.tiles.some(([a,b])=>a===tp.x&&b===tp.y)){for(const[x,y]of G.depot.tiles){const j=idx(x,y);G.track[j]=0;G.fix[j]=0;}G.trains=G.trains.filter(t=>!t.segs.some(s=>G.depot.tiles.some(([a,b])=>a===s.x&&b===s.y)));G.depot=null;recomputeOwnRes();computeZones();G.trackVer++;return true;}
   return false;
 }
-function edDelTown(ti){const t=G.towns[ti];if(!t)return;for(const tr of G.trains.slice())if(tr.segs.some(s=>t.dock.some(([a,b])=>a===s.x&&b===s.y)))G.trains=G.trains.filter(q=>q!==tr);G.towns.splice(ti,1);recomputeOwnRes();rebuildDocks();computeZones();markDirty(t.x,t.y);edRebake(true);}
+function edDelTown(ti){const t=G.towns[ti];if(!t)return;for(const tr of G.trains.slice())if(t.dock&&tr.segs.some(s=>t.dock.some(([a,b])=>a===s.x&&b===s.y)))G.trains=G.trains.filter(q=>q!==tr);G.towns.splice(ti,1);recomputeOwnRes();rebuildDocks();computeZones();markDirty(t.x,t.y);edRebake(true);}
 function edDelInd(ii){const o=G.inds[ii];if(!o)return;G.inds.splice(ii,1);recomputeOwnRes();rebuildDocks();computeZones();markDirty(o.x,o.y);edRebake(true);}
 function areaFree(pts,ri){for(const[x,y]of pts){if(!inTable(x,y)||tableOf(x,y)!==ri)return'Keep it all on one table.';const i=idx(x,y);if(G.terr[i]===1)return'That’s water.';if(G.own[i]!==-1||G.res[i])return'Something is already there.';}return null;}
 function townDock(x,y,side){return side===0?[[x-1,y+3],[x,y+3],[x+1,y+3]]:side===1?[[x-1,y-3],[x,y-3],[x+1,y-3]]:side===2?[[x+3,y-1],[x+3,y],[x+3,y+1]]:[[x-3,y-1],[x-3,y],[x-3,y+1]];}
 function indDock(x,y,side){const o=[];for(let k=0;k<3;k++){if(side===0)o.push([x-1+k,y+2]);else if(side===1)o.push([x-1+k,y-1]);else if(side===2)o.push([x+2,y-1+k]);else o.push([x-1,y-1+k]);}return o;}
 function flattenUnder(pts,lv){for(const[x,y]of pts){const i=idx(x,y);if(!G.track[i]&&!G.bp[i]){G.h[i]=lv;G.terr[i]=0;}G.tree[i]=0;markDirty(x,y);}treeVer++;}
 function edPlaceTown(tp){
-  const{x,y}=tp,ri=tableOf(x,y);if(ri<0)return'Place towns on a table.';const dock=townDock(x,y,ED.side),core=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)core.push([x+dx,y+dy]);
+  const{x,y}=tp,ri=tableOf(x,y);if(ri<0)return'Place towns on a table.';const dock=[],core=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)core.push([x+dx,y+dy]);
   const err=areaFree(core,ri)||areaFree(dock.filter(([a,b])=>!G.track[idx(a,b)]),ri);if(err)return err;
   const lv=G.h[idx(x,y)];flattenUnder([[x,y],...dock.filter(([a,b])=>!G.track[idx(a,b)])],lv);
   const name=($('#edTown')&&$('#edTown').value)||nextTownName();const ti=G.towns.length;
-  const tw={x,y,name,pop:ED.townSize,lvl:townLevel(ED.townSize),houses:[{x,y,hall:true,c:0,r:0,s:1,born:-99}],ri,dock,seen:true};G.towns.push(tw);recomputeOwnRes();
+  const tw={x,y,name,pop:ED.townSize,lvl:townLevel(ED.townSize),houses:[{x,y,hall:true,c:0,r:0,s:1,born:-99}],ri,dock:null,seen:true};G.towns.push(tw);recomputeOwnRes();
   const R=mulberry32(hashStr(name+x+y));for(let k=0;k<Math.ceil(tw.pop/30);k++)addHouse(ti,R,true);recomputeOwnRes();rebuildDocks();computeZones();edRebake(true);edOpts();return true;
 }
 function edResizeTown(ti,pop){const t=G.towns[ti];t.pop=pop;t.lvl=townLevel(pop);t.houses=t.houses.filter(h=>h.hall);recomputeOwnRes();const R=mulberry32(hashStr(t.name+t.x+t.y));for(let k=0;k<Math.ceil(pop/30);k++)addHouse(ti,R,true);recomputeOwnRes();markDirty(t.x,t.y);edRebake(true);}
 function edPlaceInd(tp){
-  const{x,y}=tp,ri=tableOf(x,y);if(ri<0)return'Place industries on a table.';const core=[[x,y],[x+1,y],[x,y+1],[x+1,y+1]],dock=indDock(x,y,ED.side);
+  const{x,y}=tp,ri=tableOf(x,y);if(ri<0)return'Place industries on a table.';const core=[[x,y],[x+1,y],[x,y+1],[x+1,y+1]],dock=[];
   const err=areaFree(core,ri)||areaFree(dock.filter(([a,b])=>!G.track[idx(a,b)]),ri);if(err)return err;if(core.some(([a,b])=>G.track[idx(a,b)]||G.bp[idx(a,b)]))return'Track is in the way.';
   flattenUnder([...core,...dock.filter(([a,b])=>!G.track[idx(a,b)])],G.h[idx(x,y)]);const D=IND[ED.indType];
-  G.inds.push({type:ED.indType,x,y,ri,name:D.name,stock:D.stock?Object.assign({},D.stock):{},inp:0,acc:0,dock,seen:true});recomputeOwnRes();rebuildDocks();computeZones();edRebake(true);return true;
+  G.inds.push({type:ED.indType,x,y,ri,name:D.name,stock:D.stock?Object.assign({},D.stock):{},inp:0,acc:0,dock:null,seen:true});recomputeOwnRes();rebuildDocks();computeZones();edRebake(true);return true;
 }
 function edPlaceDepot(tp){
   const{x,y}=tp,ri=tableOf(x,y),hz=ED.side===2||ED.side===3,tiles=[];for(let k=0;k<6;k++)tiles.push(hz?[x+k,y]:[x,y+k]);
@@ -2025,8 +2086,8 @@ function edPlan(tiles,bpMode){
     if(end){const known=ep>=0?ep:en,straight=(known+2)&3;let g=-1;const m0=G.track[idx(x,y)]|G.bp[idx(x,y)];if(edgeHas(m0,straight))g=straight;else for(const d of[(known+1)&3,(known+3)&3])if(edgeHas(m0,d)){g=d;break;}if(g<0)g=straight;if(ep<0)ep=g;else en=g;}
     const p=pieceFor(ep,en),ii=idx(x,y),m=G.track[ii]|G.bp[ii],gap=tableOf(x,y)<0;let L,k=0,bad=null;
     if(m){L=G.tl[ii];k=G.tk[ii]||G.bpK[ii];if(prevL!=null&&Math.abs(L-prevL)>1)bad='Too steep to join this track.';}
-    else{const gh=gap?-9:G.h[ii],water=gap||G.terr[ii]===1;if(prevL==null){L=Math.max(0,gh);if(water)bad='Start on dry land.';}else if(!water&&Math.abs(gh-prevL)<=1)L=gh;else if(gh<=prevL){L=prevL;k=1;}else{L=prevL;k=2;}}
-    if(!bad){if(G.own[ii]!==-1)bad='Buildings are in the way.';else if(gap&&k===2)bad='The gap can only be bridged.';
+    else{const tun=gap&&ED.gapKind==='tunnel',gh=gap?(tun?99:-9):G.h[ii],water=(gap&&!tun)||G.terr[ii]===1;if(prevL==null){L=Math.max(0,gh);if(water)bad='Start on dry land.';}else if(!water&&Math.abs(gh-prevL)<=1)L=gh;else if(gh<=prevL){L=prevL;k=1;}else{L=prevL;k=2;}}
+    if(!bad){if(G.own[ii]!==-1)bad='Buildings are in the way.';
       else if(m&&(G.tk[ii]||G.bpK[ii])&&!(m&(1<<p)))bad='No junctions on bridges or in tunnels.';
       else if(!m&&k&&p>=2)bad=k===1?'Bridges must be straight.':'Tunnels must be straight.';
       else if(!m&&k&&end&&i===n-1)bad=k===1?'Bridges must end on solid ground.':'Tunnels must come out the other side.';
@@ -2048,6 +2109,8 @@ function edNewJob(){const id='job'+Date.now().toString(36);const ri=Math.max(0,t
 function edDelJob(i){const p=G.projects[i];for(const t of p.tiles){G.bp[t]=0;G.bpK[t]=0;G.bpP[t]=-1;}delete G.pdefs[p.id];G.projects.splice(i,1);G.projects.forEach((q,k)=>q.idx=k);for(let t=0;t<N;t++)if(G.bpP[t]>i)G.bpP[t]--;ED.proj=Math.min(ED.proj,G.projects.length-1);G.buildVer++;}
 // ---- input dispatch (called from the shared pointer handlers) ----
 function edDown(tp){const t=ED.tool;
+  if(t==='tables'){const h=tableHit(tp.wx/TS,tp.wy/TS);if(h){TD={tbl:true,ri:h.ri,mode:h.mode,fx:tp.wx/TS,fy:tp.wy/TS,rect:null};}return;}
+  if(t==='station'){const d=inMap(tp.x,tp.y)&&DOCK.get(idx(tp.x,tp.y));if(d){removeStationAt(tp.x,tp.y);Snd.poof();edDraft();return;}const r=buildStation(tp.x,tp.y,true);if(typeof r==='string')errToast(r);else{Snd.build(4);edDraft();}return;}
   if(['raise','lower','flatten','smooth','water','land','trees','rocks'].includes(t)){TD={done:new Set()};edTerrain(tp);return;}
   if(t==='erase'){if(edClickErase(tp)){edDraft();TD=null;return;}TD={done:new Set()};edErase(tp);return;}
   if(t==='track'||t==='blueprint'){if(t==='blueprint'&&!G.projects[ED.proj]){errToast('Make a job first.');return;}TD={tiles:[[tp.x,tp.y]],plan:null,bp:t==='blueprint'};return;}
@@ -2058,12 +2121,14 @@ function edDown(tp){const t=ED.tool;
   if(typeof r==='string')errToast(r);else if(r){Snd.build(1);edDraft();}
 }
 function edMove(tp){if(!TD)return;const t=ED.tool;
+  if(TD.tbl){TD.rect=tblDragRect(tp.wx/TS,tp.wy/TS);return;}
   if(t==='track'||t==='blueprint'){if(!inMap(tp.x,tp.y))return;const T=TD.tiles;let[lx,ly]=T[T.length-1];if(lx===tp.x&&ly===tp.y)return;let guard=0;
     while((lx!==tp.x||ly!==tp.y)&&guard++<200){const dx=tp.x-lx,dy=tp.y-ly;if(Math.abs(dx)>=Math.abs(dy))lx+=Math.sign(dx);else ly+=Math.sign(dy);const k=T.findIndex(([a,b])=>a===lx&&b===ly);if(k>=0)T.length=k+1;else T.push([lx,ly]);}
     TD.plan=edPlan(T,TD.bp);return;}
   if(t==='erase')edErase(tp);else edTerrain(tp);
 }
-function edUp(){if(TD&&TD.plan&&TD.plan.items.length){const r=edBuild(TD.plan,TD.bp);if(r!==true)errToast(r);else Snd.build(TD.plan.items.length);}
+function edUp(){if(TD&&TD.tbl){const R=TD.rect,ri=TD.ri,r=REGIONS[ri];TD=null;if(R&&!R.bad&&(R.x0!==r.x0||R.y0!==r.y0||R.w!==r.w||R.h!==r.h)){if(TD===null&&R.w===r.w&&R.h===r.h)moveTable(ri,R.x0-r.x0,R.y0-r.y0);else resizeTable(ri,{x0:R.x0,y0:R.y0,w:R.w,h:R.h});}else if(R&&R.bad)errToast(R.bad);return;}
+  if(TD&&TD.plan&&TD.plan.items.length){const r=edBuild(TD.plan,TD.bp);if(r!==true)errToast(r);else Snd.build(TD.plan.items.length);}
   TD=null;edRebake(true);edDraft();}
 function edClick(tp){
   const tr=trainAt(tp);if(tr){ED.sel={k:'train',id:tr.id};edOpts();return;}
@@ -2079,14 +2144,22 @@ function edKey(e){const k=e.key.toLowerCase();if(e.target.tagName==='INPUT'||e.t
 // ---- overlay drawn into the world ----
 function edOverlay(){
   const tileRect=(x,y,col,lw=2,fill)=>{if(!inMap(x,y))return;const z=lev(x,y)*LIFT;if(fill){ctx.fillStyle=fill;ctx.fillRect(x*TS+2,y*TS+2-z,TS-4,TS-4);}ctx.strokeStyle=col;ctx.lineWidth=lw/cam.z*1.2;rr(ctx,x*TS+2,y*TS+2-z,TS-4,TS-4,6);ctx.stroke();};
-  for(const o of[...G.towns,...G.inds])for(const[x,y]of o.dock)tileRect(x,y,'rgba(90,200,255,.55)',1.5);
+  for(const o of[...G.towns,...G.inds])for(const[x,y]of o.dock||[])tileRect(x,y,'rgba(90,200,255,.55)',1.5);
+  if(ED.tool==='tables'){const lw=1/cam.z;ctx.save();ctx.font=`600 ${Math.max(14,13/cam.z)}px Fredoka, system-ui`;ctx.textBaseline='bottom';
+    REGIONS.forEach((r,ri)=>{const x=r.x0*TS,y=r.y0*TS-LIFT,w=r.w*TS,h=r.h*TS;ctx.setLineDash([10*lw,6*lw]);ctx.strokeStyle=r.accent;ctx.lineWidth=3*lw;ctx.strokeRect(x,y,w,h);ctx.setLineDash([]);
+      ctx.fillStyle='#fff';ctx.strokeStyle='rgba(40,30,20,.85)';ctx.lineWidth=4*lw;const lb=`${r.name} · ${r.w}×${r.h}`;ctx.strokeText(lb,x+6*lw,y-6*lw);ctx.fillText(lb,x+6*lw,y-6*lw);
+      ctx.fillStyle='#fff';ctx.strokeStyle=r.accent;ctx.lineWidth=2*lw;const hs=9*lw;for(const[hx,hy]of[[x,y+h/2],[x+w,y+h/2],[x+w/2,y],[x+w/2,y+h],[x,y],[x+w,y],[x,y+h],[x+w,y+h]]){ctx.fillRect(hx-hs/2,hy-hs/2,hs,hs);ctx.strokeRect(hx-hs/2,hy-hs/2,hs,hs);}});
+    if(TD&&TD.tbl&&TD.rect){const R=TD.rect;ctx.fillStyle=R.bad?'rgba(220,60,50,.25)':'rgba(120,230,140,.22)';ctx.strokeStyle=R.bad?'rgba(220,60,50,1)':'rgba(120,230,140,1)';ctx.lineWidth=3*lw;ctx.fillRect(R.x0*TS,R.y0*TS-LIFT,R.w*TS,R.h*TS);ctx.strokeRect(R.x0*TS,R.y0*TS-LIFT,R.w*TS,R.h*TS);
+      const lb=`${R.w}×${R.h}`;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(40,30,20,.85)';ctx.lineWidth=4*lw;ctx.strokeText(lb,R.x0*TS+6*lw,R.y0*TS-LIFT+24*lw);ctx.fillText(lb,R.x0*TS+6*lw,R.y0*TS-LIFT+24*lw);}
+    ctx.restore();return;}
   if(G.depot)for(const[x,y]of G.depot.tiles)tileRect(x,y,'rgba(255,190,90,.6)',1.5);
   const sp=G.projects[ED.proj];if(sp&&(ED.tool==='blueprint'||ED.tool==='site'||(ED.sel&&ED.sel.k==='proj'))){for(const i of sp.tiles){const x=i%MW;tileRect(x,(i-x)/MW,'rgba(140,200,255,.95)',2);}if(sp.site>=0){const x=sp.site%MW;tileRect(x,(sp.site-x)/MW,'rgba(255,140,60,1)',3,'rgba(255,140,60,.18)');}}
   for(const p of G.projects)if(p.site>=0&&p!==sp){const x=p.site%MW;tileRect(x,(p.site-x)/MW,'rgba(255,140,60,.6)',1.5);}
   for(const is of ED.issues)if(is.tile!=null){const x=is.tile%MW;tileRect(x,(is.tile-x)/MW,is.lv==='err'?'rgba(230,60,50,1)':'rgba(240,180,40,1)',3);}
   if(hoverT&&ED.tool!=='pan'&&ED.tool!=='select'){const t=ED.tool,{x,y}=hoverT;
-    if(t==='town'){const d=townDock(x,y,ED.side);for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)tileRect(x+dx,y+dy,'rgba(255,255,255,.8)',1.5);for(const[a,b]of d)tileRect(a,b,'rgba(90,200,255,1)',2);}
-    else if(t==='industry'){for(const[a,b]of[[x,y],[x+1,y],[x,y+1],[x+1,y+1]])tileRect(a,b,'rgba(255,255,255,.8)',1.5);for(const[a,b]of indDock(x,y,ED.side))tileRect(a,b,'rgba(90,200,255,1)',2);}
+    if(t==='town'){for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)tileRect(x+dx,y+dy,'rgba(255,255,255,.8)',1.5);}
+    else if(t==='station'){const r=stationAt(x,y),col=r.err?'rgba(220,70,60,.9)':'rgba(120,230,140,1)';for(const[a,b]of r.tiles||[[x,y]])tileRect(a,b,col,2.5);}
+    else if(t==='industry'){for(const[a,b]of[[x,y],[x+1,y],[x,y+1],[x+1,y+1]])tileRect(a,b,'rgba(255,255,255,.8)',1.5);}
     else if(t==='depot'){const hz=ED.side===2||ED.side===3;for(let k=0;k<6;k++)tileRect(hz?x+k:x,hz?y:y+k,'rgba(255,190,90,1)',2);}
     else if(['raise','lower','flatten','smooth','water','land','trees','rocks','erase'].includes(t)){for(const[a,b]of brushTiles(hoverT,ED.r))tileRect(a,b,t==='erase'?'rgba(230,70,60,.9)':'rgba(255,255,255,.75)',1.5);}
     else tileRect(x,y,'rgba(255,255,255,.85)',2);}
@@ -2127,14 +2200,106 @@ function openJobsEditor(focus){
       A('del').onclick=()=>{edDelJob(i);edDraft();openJobsEditor();};});
   });
 }
+// ---- tables: move, resize, add, remove, restyle; connections ----
+const ARRK=['terr','tree','track','own','h','tl','tk','fix','bp','bpK','bpP','seen','zone','res'];
+const STYLE_NAMES={meadow:'Meadow',autumn:'Autumn',canyon:'Canyon',snow:'Snow'};
+function worldRemap(newTables,map,rmap){
+  const oMW=MW,oMH=MH,oTBL=TBL,old={};for(const k of ARRK)old[k]=G[k];
+  const minX=Math.min(...newTables.map(t=>t.x0)),minY=Math.min(...newTables.map(t=>t.y0));for(const t of newTables){t.x0-=minX;t.y0-=minY;}
+  setTables(newTables);
+  for(const k of ARRK){const a=new old[k].constructor(N);if(k==='own'||k==='bpP')a.fill(-1);G[k]=a;}
+  const got=new Uint8Array(N);
+  const M=(x,y)=>{if(x<0||y<0||x>=oMW||y>=oMH)return null;const r=map(x,y,oTBL[y*oMW+x]);if(!r)return null;const nx=r[0]-minX,ny=r[1]-minY;if(nx<0||ny<0||nx>=MW||ny>=MH)return null;return[nx,ny];};
+  for(let y=0;y<oMH;y++)for(let x=0;x<oMW;x++){const m=M(x,y);if(!m)continue;const oi=y*oMW+x,ni=m[1]*MW+m[0],wasT=oTBL[oi]>=0,isT=TBL[ni]>=0;
+    if(!wasT&&isT){if((old.track[oi]||old.bp[oi])&&!got[ni]){for(const k of['track','tl','tk','fix','bp','bpK','bpP'])G[k][ni]=old[k][oi];G.h[ni]=Math.max(0,old.tl[oi]);G.terr[ni]=0;got[ni]=1;}continue;}
+    if(wasT!==isT)continue;if(!wasT&&!old.track[oi]&&!old.bp[oi])continue;if(got[ni])continue;for(const k of ARRK)G[k][ni]=old[k][oi];got[ni]=1;}
+  for(let i=0;i<N;i++){if(TBL[i]<0){G.terr[i]=3;G.h[i]=FLOOR_L;G.tree[i]=0;}else if(!got[i]){G.terr[i]=0;G.h[i]=1;}G.seen[i]=1;}
+  const MP=p=>M(p[0],p[1]),MI=i=>{const r=M(i%oMW,Math.floor(i/oMW));return r?r[1]*MW+r[0]:-1;};
+  G.towns=G.towns.filter(t=>{const c=MP([t.x,t.y]);if(!c)return false;const dk=t.dock?t.dock.map(MP):null;
+    t.houses=t.houses.map(h=>{const p=MP([h.x,h.y]);return p?Object.assign(h,{x:p[0],y:p[1]}):null;}).filter(Boolean);t.x=c[0];t.y=c[1];t.dock=dk&&dk.every(Boolean)?dk:null;t.ri=tableOf(t.x,t.y);return t.ri>=0&&t.houses.length;});
+  G.inds=G.inds.filter(o=>{const c=MP([o.x,o.y]),c2=MP([o.x+1,o.y+1]);if(!c||!c2||c2[0]!==c[0]+1||c2[1]!==c[1]+1)return false;const dk=o.dock?o.dock.map(MP):null;o.x=c[0];o.y=c[1];o.dock=dk&&dk.every(Boolean)?dk:null;o.ri=tableOf(o.x,o.y);return o.ri>=0;});
+  if(G.depot){const d=G.depot.tiles.map(MP);G.depot=d.every(Boolean)?{tiles:d}:null;}
+  G.trains=G.trains.filter(t=>{const ss=t.segs.map(q=>[q,MP([q.x,q.y])]);if(ss.some(z=>!z[1]))return false;for(const[q,p]of ss){q.x=p[0];q.y=p[1];}return true;});
+  for(const p of G.projects){p.tiles=p.tiles.map(MI).filter(i=>i>=0);p.site=p.site>=0?MI(p.site):-1;}
+  const sw={};for(const k in G.sw){const[x,y,e]=k.split(',').map(Number),r=MP([x,y]);if(r)sw[r[0]+','+r[1]+','+e]=G.sw[k];}G.sw=sw;
+  if(rmap){for(const id in G.pdefs){const D=G.pdefs[id];const n=rmap[D.ri];D.ri=n>=0?n:0;if(D.gate!=null){const g=rmap[D.gate];D.gate=g>=0?g:undefined;}}
+    const reg=[];rmap.forEach((n,o)=>{if(n>=0)reg[n]=G.reg[o];});G.reg=REGIONS.map((_,i)=>!!reg[i]);}
+  else while(G.reg.length<REGIONS.length)G.reg.push(false);
+  if(!G.reg.some(Boolean))G.reg[0]=true;
+  for(let i=0;i<N;i++)if(G.bp[i]&&!G.projects[G.bpP[i]]){G.bp[i]=0;G.bpP[i]=-1;}
+  for(const p of G.projects)p.tiles=p.tiles.filter(i=>G.bp[i]);
+  if(G.camStart)G.camStart={x:G.camStart.x-minX*TS,y:G.camStart.y-minY*TS};cam.x-=minX*TS;cam.y-=minY*TS;
+  recomputeOwnRes();rebuildDocks();computeZones();G.trackVer++;G.buildVer++;treeVer++;rowVer='';
+}
+function tblCheck(list){
+  for(const t of list)if(t.w<8||t.h<6||t.w>60||t.h>40)return'Tables must be 8 to 60 tiles wide and 6 to 40 deep.';
+  for(let a=0;a<list.length;a++)for(let b=a+1;b<list.length;b++){const A=list[a],B=list[b];if(A.x0<B.x0+B.w&&B.x0<A.x0+A.w&&A.y0<B.y0+B.h&&B.y0<A.y0+A.h)return'Tables can’t overlap.';}
+  const w=Math.max(...list.map(t=>t.x0+t.w))-Math.min(...list.map(t=>t.x0)),h=Math.max(...list.map(t=>t.y0+t.h))-Math.min(...list.map(t=>t.y0));if(w*h>26000)return'That makes the layout too big.';
+  return null;
+}
+function edTableOp(list,map,rmap,bake){
+  const err=tblCheck(list);if(err){errToast(err);return false;}
+  worldRemap(list,map,rmap);
+  if(bake==='all'){BAKE.length=0;for(let ri=0;ri<REGIONS.length;ri++)bakeTable(ri);}else for(const ri of bake||[])bakeTable(ri);
+  bakeFloor();clampCam();ED.issues=[];edDraft();edOpts();Snd.build(3);return true;
+}
+function moveTable(ri,dx,dy){if(!dx&&!dy)return;const list=curTables();list[ri].x0+=dx;list[ri].y0+=dy;return edTableOp(list,(x,y,t)=>t===ri?[x+dx,y+dy]:[x,y],null,[]);}
+function resizeTable(ri,rect){const list=curTables();Object.assign(list[ri],rect);const R=list[ri];
+  return edTableOp(list,(x,y,t)=>t===ri&&(x<R.x0||y<R.y0||x>=R.x0+R.w||y>=R.y0+R.h)?null:[x,y],null,[ri]);}
+function deleteTable(ri){if(REGIONS.length<2)return;const list=curTables();list.splice(ri,1);const rmap=REGIONS.map((_,i)=>i<ri?i:i===ri?-1:i-1);BAKE.splice(ri,1);
+  return edTableOp(list,(x,y,t)=>t===ri?null:[x,y],rmap,[]);}
+function addTable(style){const list=curTables();const x0=Math.max(...list.map(t=>t.x0+t.w))+3;list.push({style,name:STYLES[style].name,x0,y0:0,w:20,h:14});
+  return edTableOp(list,(x,y)=>[x,y],null,[list.length-1]);}
+function restyleTable(ri,style){const list=curTables();list[ri].style=style;setTables(list);bakeTable(ri);treeVer++;G.buildVer++;edDraft();}
+function connections(){
+  const out=[],M=i=>G.track[i]|G.bp[i],seen=new Set();
+  for(let i=0;i<N;i++){if(TBL[i]>=0||!M(i)||seen.has(i))continue;const st=[i],tabs=new Set(),jobs=new Set();let bp=false,tun=false;seen.add(i);
+    while(st.length){const j=st.pop(),x=j%MW,y=(j-x)/MW,m=M(j);if(G.bp[j]){bp=true;if(G.projects[G.bpP[j]])jobs.add(G.bpP[j]);}if(G.tk[j]===2||G.bpK[j]===2)tun=true;
+      for(let e=0;e<4;e++){if(!edgeHas(m,e))continue;const nx=x+DX[e],ny=y+DY[e];if(!inMap(nx,ny))continue;const k=idx(nx,ny);if(!edgeHas(M(k),(e+2)&3))continue;
+        if(TBL[k]>=0){tabs.add(TBL[k]);if(G.bp[k]&&G.projects[G.bpP[k]]){bp=true;jobs.add(G.bpP[k]);}continue;}if(!seen.has(k)){seen.add(k);st.push(k);}}}
+    out.push({tabs:[...tabs],bp,tun,jobs:[...jobs],tile:i});}
+  const pairs=new Set();
+  for(let i=0;i<N;i++){const a=TBL[i];if(a<0)continue;const x=i%MW,y=(i-x)/MW,m=M(i);for(const e of[1,2]){if(!edgeHas(m,e))continue;const nx=x+DX[e],ny=y+DY[e];if(!inMap(nx,ny))continue;const k=idx(nx,ny),b=TBL[k];
+    if(b>=0&&b!==a&&edgeHas(M(k),(e+2)&3)&&!pairs.has(i)){pairs.add(i);const jobs=[i,k].filter(q=>G.bp[q]&&G.projects[G.bpP[q]]).map(q=>G.bpP[q]);out.push({tabs:[a,b],bp:jobs.length>0,tun:false,jobs,tile:i,direct:true});}}}
+  return out;
+}
+function tablesPanel(){
+  const conns=connections();
+  return REGIONS.map((r,i)=>`<div class="tcard"><div class="tc1"><i style="background:${r.accent}"></i><input data-tn="${i}" value="${esc(r.name)}" aria-label="Table name"><button class="mini-x ${ED.delArm===i?'arm':''}" data-tdel="${i}" ${REGIONS.length<2?'disabled':''} title="Remove table">${ED.delArm===i?'Sure?':'✕'}</button></div>
+    <div class="tc2"><select data-ts="${i}" aria-label="Look">${STYLE_LIST.map(st=>`<option value="${st.key}" ${st.key===r.style?'selected':''}>${STYLE_NAMES[st.key]}</option>`).join('')}</select><label class="chk"><input type="checkbox" data-to="${i}" ${G.reg[i]?'checked':''}> Open at start</label></div>
+    <div class="tc3"><span>Width</span><button data-tw="${i}" data-d="-2">−</button><b>${r.w}</b><button data-tw="${i}" data-d="2">+</button><span>Depth</span><button data-th="${i}" data-d="-2">−</button><b>${r.h}</b><button data-th="${i}" data-d="2">+</button></div></div>`).join('')
+  +`<div class="row"><select id="tNew">${STYLE_LIST.map(st=>`<option value="${st.key}">${STYLE_NAMES[st.key]}</option>`).join('')}</select><button class="btn primary" data-a="addtbl">Add table</button></div>
+  <div class="sect">Connections</div>${conns.length?conns.map((c,k)=>`<div class="conn ${c.tabs.length<2?'warn':''}"><div><b>${c.tabs.length?c.tabs.map(t=>esc(REGIONS[t].name)).join(' ↔ '):'Loose track in a gap'}</b><small>${c.tabs.length<2?'Doesn’t reach another table yet':`${c.direct?'Tables touch':c.tun?'Tunnel':'Bridge'} · ${c.bp?'opens with '+c.jobs.map(j=>esc(projDef(G.projects[j]).name)).join(', '):'open from the start'}`}</small></div><button class="btn" data-conn="${k}">Show</button></div>`).join(''):'<p class="tip">No tables are connected yet.</p>'}
+  <p class="tip">To connect tables, draw Main line or Blueprint track across the gap between them. Blueprint crossings open when their job is done. Choose bridge or tunnel in the track tools.</p>`;
+}
+function wireTables(o){
+  o.querySelectorAll('[data-tn]').forEach(inp=>inp.onchange=()=>{REGIONS[+inp.dataset.tn].name=inp.value||STYLE_NAMES[REGIONS[+inp.dataset.tn].style];G.buildVer++;edDraft();edOpts();});
+  o.querySelectorAll('[data-ts]').forEach(sel=>sel.onchange=()=>{restyleTable(+sel.dataset.ts,sel.value);edOpts();});
+  o.querySelectorAll('[data-to]').forEach(cb=>cb.onchange=()=>{G.reg[+cb.dataset.to]=cb.checked;if(!G.reg.some(Boolean))G.reg[0]=true;edDraft();edOpts();});
+  o.querySelectorAll('[data-tw]').forEach(b=>b.onclick=()=>{const i=+b.dataset.tw,r=REGIONS[i];resizeTable(i,{w:r.w+ +b.dataset.d});});
+  o.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{const i=+b.dataset.th,r=REGIONS[i];resizeTable(i,{h:r.h+ +b.dataset.d});});
+  o.querySelectorAll('[data-tdel]').forEach(b=>b.onclick=()=>{const i=+b.dataset.tdel;if(ED.delArm===i){ED.delArm=null;deleteTable(i);}else{ED.delArm=i;edOpts();}});
+  const add=o.querySelector('[data-a=addtbl]');if(add)add.onclick=()=>{addTable(o.querySelector('#tNew').value);const r=REGIONS[REGIONS.length-1];cam.x=(r.x0+r.w/2)*TS;cam.y=(r.y0+r.h/2)*TS;clampCam();};
+  const conns=connections();o.querySelectorAll('[data-conn]').forEach(b=>b.onclick=()=>focusTile(conns[+b.dataset.conn].tile));
+}
+function tableHit(fx,fy){
+  for(let ri=REGIONS.length-1;ri>=0;ri--){const r=REGIONS[ri],T=.7;if(fx<r.x0-T||fx>r.x0+r.w+T||fy<r.y0-T||fy>r.y0+r.h+T)continue;
+    const e={l:Math.abs(fx-r.x0)<T,r:Math.abs(fx-(r.x0+r.w))<T,t:Math.abs(fy-r.y0)<T,b:Math.abs(fy-(r.y0+r.h))<T};
+    if(e.l||e.r||e.t||e.b)return{ri,mode:e};if(fx>r.x0&&fx<r.x0+r.w&&fy>r.y0&&fy<r.y0+r.h)return{ri,mode:'move'};}
+  return null;
+}
+function tblDragRect(fx,fy){const r=REGIONS[TD.ri],dx=Math.round(fx-TD.fx),dy=Math.round(fy-TD.fy);let{x0,y0,w,h}=r;
+  if(TD.mode==='move'){x0+=dx;y0+=dy;}else{const m=TD.mode;if(m.l){const d=Math.min(dx,w-8);x0+=d;w-=d;}if(m.r)w=Math.max(8,w+dx);if(m.t){const d=Math.min(dy,h-6);y0+=d;h-=d;}if(m.b)h=Math.max(6,h+dy);}
+  const list=curTables();list[TD.ri]={...list[TD.ri],x0,y0,w,h};return{x0,y0,w,h,bad:tblCheck(list)};}
+
 // ---- settings / checks / save / load / export ----
 function openEdSettings(){
   openModal(`<div class="modal card menu"><div class="mh"><h2>Layout settings</h2><button class="x" data-a="close" aria-label="Close">✕</button></div>
     <div class="sect">Starting coins</div><input id="esMoney" type="number" min="0" step="500" value="${G.money}">
-    <div class="sect">Tables</div>${REGIONS.map((r,i)=>`<div class="setrow"><input data-rn="${i}" value="${esc(G.rnames[i]||r.name)}"><label class="chk"><input type="checkbox" data-ro="${i}" ${G.reg[i]?'checked':''}> Open at start</label></div>`).join('')}
+    <div class="sect">Tables</div>${REGIONS.map((r,i)=>`<div class="setrow"><input data-rn="${i}" value="${esc(r.name)}"><label class="chk"><input type="checkbox" data-ro="${i}" ${G.reg[i]?'checked':''}> Open at start</label></div>`).join('')}
     <div class="sect">Start view</div><button class="btn" data-a="cam">Use the current view as the start view</button></div>`,m=>{
     m.querySelector('[data-a=close]').onclick=closeModal;m.querySelector('#esMoney').onchange=e=>{G.money=Math.max(0,+e.target.value||0);edDraft();};
-    m.querySelectorAll('[data-rn]').forEach(inp=>inp.onchange=()=>{G.rnames[+inp.dataset.rn]=inp.value||REGIONS[+inp.dataset.rn].name;applyNames();G.buildVer++;edDraft();});
+    m.querySelectorAll('[data-rn]').forEach(inp=>inp.onchange=()=>{REGIONS[+inp.dataset.rn].name=inp.value||STYLES[REGIONS[+inp.dataset.rn].style].name;G.buildVer++;edDraft();});
     m.querySelectorAll('[data-ro]').forEach(inp=>inp.onchange=()=>{G.reg[+inp.dataset.ro]=inp.checked;if(!G.reg.some(Boolean))G.reg[0]=true;edDraft();});
     m.querySelector('[data-a=cam]').onclick=()=>{G.camStart={x:cam.x,y:cam.y};toast('Start view saved.');edDraft();};});
 }
@@ -2149,7 +2314,7 @@ function openChecks(after){
   return list;
 }
 function edPlaytest(){const list=validateLayout();ED.issues=list;const go=()=>{const L=serializeLayout(ED.name);LS.set('pj-edit-draft',L);EDIT=ED=null;document.body.classList.remove('editing');$('#edRoot').classList.add('hidden');
-    closePanel();FOLLOW=null;SEL=null;P.length=0;FX.length=0;rowVer='';buildFromLayout(L);for(let ri=0;ri<4;ri++){BAKE[ri]=null;if(G.reg[ri])bakeTable(ri);}G.playtest=true;
+    closePanel();FOLLOW=null;SEL=null;P.length=0;FX.length=0;rowVer='';buildFromLayout(L);BAKE.length=0;for(let ri=0;ri<REGIONS.length;ri++){if(G.reg[ri])bakeTable(ri);}bakeFloor();G.playtest=true;
     resize();cam.z=clamp(COARSE?1:1.25,minZoom(),4);cam.x=G.camStart.x;cam.y=G.camStart.y;clampCam();dispMoney=G.money;setSpeed(1);setTool('select');renderGoal(true);updateBadge();$('#edBack').classList.remove('hidden');toast('Playtest started. Your edits are kept.','big',3);};
   if(list.some(i=>i.lv==='err'))openChecks(go);else go();}
 function edSave(){const all=LS.get('pj-layouts',{});all[ED.name]=serializeLayout(ED.name);if(LS.set('pj-layouts',all))toast(`Saved “${ED.name}” in this browser.`);else errToast('Could not save here. Use Export instead.');}
@@ -2178,7 +2343,7 @@ function openExport(){
     const s=q('[data-a=std]');if(s)s.onclick=()=>{LS.del('pj-active-layout');LS.del(SAVE_KEY);toast('Back to the standard tables for your next game.');closeModal();};});
 }
 
-const DEFAULT_LAYOUT={"fmt":"puffwood-layout","v":1,"name":"Puffwood Junction","money":3000,"reg":[true,false,false,false],"rnames":["Clover Meadows","Ember Woods","Redrock Canyon","Frostpine Peaks"],"camStart":{"x":460,"y":280},"grid":{"terr":"000000011000000000000000333000000000000000000000000000000001000000000000000333000000000000000000000000000000001100000000000000333000000000000000000000000000000000100000000000000333000000000000000000000000000000000100000000000000333000000000000000000000000000000000100000000000000333000000000000000000000000000000000100000000000000333000000000000011111000000000000000100000000000000333000000000000110001110011000000000100000000000000333000000000111100000011110000000001100000000000000333000000011100000000000000000000011100000000000000333000000110000000000000000000000011100000000000000333000001100000000000000000000000011000000000000000333000000000000000000000000000000110000000000000000333000000000000000000000000000000110000000000000000333000000000000000000000000000000010000000000000000333000000000000000000000000333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001100000000111110000000000000000000333000000000000000100000000100011100000000000000000333000000000000001100000000000000111000111000000000333000000000000011000000000000000001111101100000011333000000000000110000000000000000000000000111111110333000000000000111100000000000000000000000000000000333000000000000111110000000000000000000000000000000333000000000000011110000000000000000000000000000000333000000000000010000000000000000000000000000000000333000000000000010000000000000000000000000000000000333000000000000011000000000000000000000000000000000333000000000000001000000000","tree":"002300000210000000003400000030331010413233000000032011010000000000000034000000420300000000000000000002000000000000000000040000000004000000004323000000001000000000000000000030030000000000000001033000000000000000010000000000010000000000000000000000000000000000000000000000000000010000000000000001400000000000000000000000020000000041000000000000001100000000000000000000000000000320000000000000000000000010001000040000003000003010000000000004010000000000240200000000000000000000000000000000000000000000000000304041000000000000000000000000000020120000000000000000004000000000000000000000000000020000000000000001412310000000000230410000000000000003000000000000300000000000000000000000000000000000000000000000002000000000000000000000000000000000000001000000000040000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003301000000000000003000000000000000014400001013000000011000000000000000000000050050401024000003014230002401030000000000000040000550005000130300333020010344000000400000000000000000005000000100300000040000000000000020000000003000000100120001304400022030000000000000000000000000000000030300000023002003011000000000000040000000000000000000000000000440033340000000000000020000020210030000000000002011300314120550000000000000000040400000000100000002043004021000550000000000000000000000000000300000004120000024025050000000000000000000000000000210000003040000002025055000000000000000000000001000200100550000000000040050000000000004002400000000000400000003111001040401055000400000000040000000000000004030000000000000000500400000000000000000000000000100000400000000000000050030000000000000000000000000040000000000000000200000","track":"0000000000000000000000000000000000000000000000000000000000000000000000000000000000082228222222200000000000000000000000010000000000000092000000000000000000000000000000000010000000000000010000000000000000000000000000000000010000000000000010000000822222222000000000822ix00000100000000000000100000000000000000000000001001100000100000000000000100000000000000000000000001001100222x000000000000001000000000000000000000022iw00110000042220000000000010000000100000000000000001000110000000000000000222262222222h0000000000082222w00011010000000000000000000000000010000000000010000000042262200000000000000000000000010000000000010000000000000000000000000000000000000010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","h":"5555554444555666666655551114444555555444444445555555555554444455666666655551114444455555444444445555555555555444456666666666651115444455555554444445555555555555544455666666666651115444455555555444445555545555555544555566666666651115444455555555444445555546655555544555566666666661115444455555554444445555546655555544555555556666661115444555555544444444444446655555544555555555555551115555555544444444444444446655555544555555555555551115555554444444445444444445555555544555555555555551115555544444555555555555555555555444555555555555551115555544444555556655555555555554444555555555555551115555544555555556665555555555544444565555555555661115444444555555556666655555555544444566666655555661115555555555555556666655555555544445566666666666661116666666555557777776655554445544445666666666666661116666666555557777776654441111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111119997777777779977777999991119aa998755555654567886555999777777779997777799999111aaaa988555556545677866666666666677799977777999971119aaaa98555556545667876674444444666799997779999771119aaa9885555565455677766744444444466666666699997711188888775555565445677777744444444444444444666666611177766777777665545677887744444444444444444466444411165566777876655445678898844444444444444444444444411144566778876554455678999844444444444444444444444411144456789876544555678aaa966664444444444444444444411144456789876544445578aaa99776664444444444444444441115445679a8765444445889aaa7777766666666444444444441116544679a87655444457899aa7777777777776666666666661115444578887765455556789aa777777777777777777779977111444456777665545555568aaa777777777777777777799977111444445665554444444468aaa777777777777777777999977111444445654444444444468999","tl":"444444444444444444444444444444444444444444444444444444444444444444444444444444444445555544444444444444444444444444444446444444444444445555544444444444444444444444444444446444444444444445444444444444444444444444444444444446444444444444445444444444444555544444444454455444446666644444444445444444444444444444444444454455444445444444444444445444444444444444444444444454455455555444444444444445444444444444444444444455554455454445555444444444445444444444444444444444444544455454444555555555555554455555554444444444455555544455454444444444444444444444454455665555554454444444455555544444444444444444444454454444444444454444444444444444444444444444444444454454444444444454444444444444444444444444444444444454444444444444444444444444444444444444444444444444554444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444","tk":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","fix":"000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111110000000000000000000000001000000000000001100000000000000000000000000000000001000000000000001000000000000000000000000000000000001000000000000001000000011111111100000000011111000001000000000000001000000000000000000000000010011000001000000000000001000000000000000000000000010011001111000000000000001000000000000000000000011110011000001111000000000001000000010000000000000000100011000000000000000011111111111110000000000011111100011010000000000000000000000000010000000000010000000011111100000000000000000000000010000000000010000000000000000000000000000000000000010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","bp":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000022w00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008222200000000000000000010000000000000000000000000000000000000000000000000010000000000000000000000080000000000000000000000000010000000000000000000000010000g000000000000000000000000000000000000000000000100004222222222200000000g00000000000000000000000000000000000000000000000000100822222222200000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000008w0000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","bpK":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","bpP":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002222200000000000000000060000000000000000000000000000000000000000000000000060000000000000000000000010000000000000000000000000060000000000000000000000010000300000000000000000000000000000000000000000000010000333333333330000000070000000000000000000000000000000000000000000000000070055555555550000000000000000000000000000000000000070000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000770000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"towns":[{"name":"Clovermead","x":5,"y":5,"ri":0,"pop":137,"dock":[[4,8],[5,8],[6,8]],"houses":[{"x":5,"y":5,"c":0,"r":0,"s":1,"hall":true},{"x":5,"y":6,"c":5,"r":1,"s":1.01,"hall":false},{"x":6,"y":4,"c":0,"r":1,"s":1.06,"hall":false},{"x":4,"y":5,"c":2,"r":1,"s":0.91,"hall":false},{"x":4,"y":4,"c":1,"r":0,"s":0.94,"hall":false},{"x":6,"y":5,"c":6,"r":1,"s":0.88,"hall":false}]},{"name":"Hayford","x":19,"y":11,"ri":0,"pop":130,"dock":[[18,8],[19,8],[20,8]],"houses":[{"x":19,"y":11,"c":0,"r":0,"s":1,"hall":true},{"x":19,"y":12,"c":4,"r":0,"s":1.03,"hall":false},{"x":18,"y":11,"c":0,"r":0,"s":1.04,"hall":false},{"x":19,"y":10,"c":2,"r":1,"s":1.02,"hall":false},{"x":20,"y":10,"c":4,"r":0,"s":0.86,"hall":false},{"x":18,"y":12,"c":4,"r":1,"s":0.88,"hall":false}]},{"name":"Maplewood","x":34,"y":4,"ri":1,"pop":128,"dock":[[33,1],[34,1],[35,1]],"houses":[{"x":34,"y":4,"c":0,"r":0,"s":1,"hall":true},{"x":34,"y":3,"c":6,"r":1,"s":0.86,"hall":false},{"x":33,"y":3,"c":3,"r":1,"s":0.98,"hall":false},{"x":33,"y":4,"c":4,"r":1,"s":1.08,"hall":false},{"x":34,"y":5,"c":4,"r":0,"s":0.95,"hall":false},{"x":33,"y":5,"c":7,"r":0,"s":0.94,"hall":false}]}],"inds":[{"type":"woodlot","x":14,"y":9,"ri":0,"dock":[[13,11],[14,11],[15,11]]},{"type":"gravel","x":2,"y":12,"ri":0,"dock":[[1,11],[1,12],[1,13]]},{"type":"cement","x":15,"y":3,"ri":0,"dock":[[17,2],[17,3],[17,4]]},{"type":"railyard","x":20,"y":3,"ri":0,"dock":[[19,5],[20,5],[21,5]]},{"type":"lumber","x":38,"y":11,"ri":1,"dock":[[40,10],[40,11],[40,12]]},{"type":"sawmill","x":42,"y":2,"ri":1,"dock":[[41,1],[42,1],[43,1]]},{"type":"lumber","x":47,"y":2,"ri":1,"dock":[[46,4],[47,4],[48,4]]}],"depot":[[11,10],[11,9],[11,8],[11,7],[11,6],[11,5]],"pdefs":{"shed":{"name":"Fix up the Engine Shed","ri":0,"unlock":"shop","order":0,"phases":[{"label":"Patch the roof and re-ballast the yard","need":{"logs":6,"gravel":4}}],"reward":1500,"note":"Unlocks buying cars at the depot and a bigger yard to build in."},"culvert":{"order":1,"name":"Washed-out Culvert","ri":0,"obstacle":"washout","phases":[{"label":"Fill the washout","need":{"gravel":6}},{"label":"Rebuild the timber trestle","need":{"logs":4}}],"reward":1200,"note":"Reconnects the Cement Works and the next town."},"railyard":{"order":2,"name":"Old Rail Yard Siding","ri":0,"obstacle":"overgrown","phases":[{"label":"Clear the overgrown siding","need":{"gravel":4,"logs":4}}],"reward":600,"note":"Reaches an abandoned stockpile of rails and steel beams."},"bridgeA":{"order":3,"name":"The Ember Bridge","ri":0,"gate":1,"obstacle":"landslide","phases":[{"label":"Clear the landslide","need":{"slabs":4,"beams":2}},{"label":"Lay the bridge deck","need":{"logs":6,"rails":4}}],"reward":3000,"note":"Bridges the gap to Ember Woods."},"sawspur":{"order":4,"name":"Sawmill Spur","ri":1,"obstacle":"washout","phases":[{"label":"Rebuild the embankment","need":{"gravel":6,"slabs":2}}],"reward":1500,"note":"Reaches the Sawmill. Gravel and concrete have to come from Clover Meadows."},"mogul":{"order":5,"name":"Abandoned Siding","ri":1,"obstacle":"overgrown","phases":[{"label":"Relay the rotten siding","need":{"planks":4,"rails":2}}],"reward":500,"note":"An old Shay logging engine and its caboose were left here. Repair the siding and couple to them to recover them."},"camp2":{"order":6,"name":"Upper Camp Line","ri":1,"obstacle":"landslide","phases":[{"label":"Shore up the cutting","need":{"planks":4,"gravel":4}}],"reward":1500,"note":"Reaches the second Lumber Camp."},"tunnelT":{"order":7,"name":"Frostpine Pass Tunnel","ri":1,"gate":3,"obstacle":"landslide","locked":true,"phases":[{"label":"Blast the rockfall","need":{"machinery":2}},{"label":"Line the tunnel","need":{"slabs":8,"beams":4}}],"reward":6000,"note":"Coming in a future update. It needs machinery from beyond the pass."}},"projects":[{"id":"culvert","site":523},{"id":"railyard","site":272},{"id":"bridgeA","site":426},{"id":"sawspur","site":135},{"id":"mogul","site":550},{"id":"camp2","site":448},{"id":"tunnelT","site":496},{"id":"shed","site":368}],"trains":[{"name":"Old Bessie","ab":false,"hp":36,"segs":[{"x":11,"y":9,"p":0,"d":1},{"x":11,"y":10,"p":0,"d":1}],"veh":[{"kind":"eng","e":"shunter","color":"#d9a23a","flip":false,"name":"Old Bessie"}]},{"name":"Parked cars","ab":false,"hp":36,"segs":[{"x":11,"y":5,"p":0,"d":1},{"x":11,"y":6,"p":0,"d":1},{"x":11,"y":7,"p":0,"d":1},{"x":11,"y":8,"p":0,"d":1}],"veh":[{"kind":"car","t":"logcar","c":null,"n":0},{"kind":"car","t":"hopper","c":null,"n":0},{"kind":"car","t":"flatcar","c":null,"n":0}]},{"name":"Scout","ab":false,"hp":36,"segs":[{"x":4,"y":8,"p":1,"d":0},{"x":5,"y":8,"p":1,"d":0}],"veh":[{"kind":"eng","e":"draisine","color":"#e2a22a","flip":false,"name":"Scout"}]},{"name":"Old Timber","ab":true,"hp":36,"segs":[{"x":46,"y":10,"p":1,"d":0},{"x":47,"y":10,"p":1,"d":0},{"x":48,"y":10,"p":1,"d":0}],"veh":[{"kind":"eng","e":"shay","color":"#3d4a3a","flip":false,"name":"Old Timber"},{"kind":"car","t":"caboose","c":null,"n":0}]}]};
+const DEFAULT_LAYOUT={"fmt":"puffwood-layout","v":1,"name":"Puffwood Junction","money":3000,"reg":[true,false,false,false],"camStart":{"x":460,"y":280},"grid":{"terr":"000000011000000000000000333000000000000000000000000000000001000000000000000333000000000000000000000000000000001100000000000000333000000000000000000000000000000000100000000000000333000000000000000000000000000000000100000000000000333000000000000000000000000000000000100000000000000333000000000000000000000000000000000100000000000000333000000000000011111000000000000000100000000000000333000000000000110001110011000000000100000000000000333000000000111100000011110000000001100000000000000333000000011100000000000000000000011100000000000000333000000110000000000000000000000011100000000000000333000001100000000000000000000000011000000000000000333000000000000000000000000000000110000000000000000333000000000000000000000000000000110000000000000000333000000000000000000000000000000010000000000000000333000000000000000000000000333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001000000000000000000000000000000000333000000000000001100000000111110000000000000000000333000000000000000100000000100011100000000000000000333000000000000001100000000000000111000111000000000333000000000000011000000000000000001111101100000011333000000000000110000000000000000000000000111111110333000000000000111100000000000000000000000000000000333000000000000111110000000000000000000000000000000333000000000000011110000000000000000000000000000000333000000000000010000000000000000000000000000000000333000000000000010000000000000000000000000000000000333000000000000011000000000000000000000000000000000333000000000000001000000000","tree":"002300000210000000003400000030331010413233000000032011010000000000000034000000420300000000000000000002000000000000000000040000000004000000004323000000001000000000000000000030030000000000000001033000000000000000010000000000010000000000000000000000000000000000000000000000000000010000000000000001400000000000000000000000020000000041000000000000001100000000000000000000000000000320000000000000000000000010001000040000003000003010000000000004010000000000240200000000000000000000000000000000000000000000000000304041000000000000000000000000000020120000000000000000004000000000000000000000000000020000000000000001412310000000000230410000000000000003000000000000300000000000000000000000000000000000000000000000002000000000000000000000000000000000000001000000000040000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003301000000000000003000000000000000014400001013000000011000000000000000000000050050401024000003014230002401030000000000000040000550005000130300333020010344000000400000000000000000005000000100300000040000000000000020000000003000000100120001304400022030000000000000000000000000000000030300000023002003011000000000000040000000000000000000000000000440033340000000000000020000020210030000000000002011300314120550000000000000000040400000000100000002043004021000550000000000000000000000000000300000004120000024025050000000000000000000000000000210000003040000002025055000000000000000000000001000200100550000000000040050000000000004002400000000000400000003111001040401055000400000000040000000000000004030000000000000000500400000000000000000000000000100000400000000000000050030000000000000000000000000040000000000000000200000","track":"0000000000000000000000000000000000000000000000000000000000000000000000000000000000082228222222200000000000000000000000010000000000000092000000000000000000000000000000000010000000000000010000000000000000000000000000000000010000000000000010000000822222222000000000822ix00000100000000000000100000000000000000000000001001100000100000000000000100000000000000000000000001001100222x000000000000001000000000000000000000022iw00110000042220000000000010000000100000000000000001000110000000000000000222262222222h0000000000082222w00011010000000000000000000000000010000000000010000000042262200000000000000000000000010000000000010000000000000000000000000000000000000010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","h":"5555554444555666666655551114444555555444444445555555555554444455666666655551114444455555444444445555555555555444456666666666651115444455555554444445555555555555544455666666666651115444455555555444445555545555555544555566666666651115444455555555444445555546655555544555566666666661115444455555554444445555546655555544555555556666661115444555555544444444444446655555544555555555555551115555555544444444444444446655555544555555555555551115555554444444445444444445555555544555555555555551115555544444555555555555555555555444555555555555551115555544444555556655555555555554444555555555555551115555544555555556665555555555544444565555555555661115444444555555556666655555555544444566666655555661115555555555555556666655555555544445566666666666661116666666555557777776655554445544445666666666666661116666666555557777776654441111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111119997777777779977777999991119aa998755555654567886555999777777779997777799999111aaaa988555556545677866666666666677799977777999971119aaaa98555556545667876674444444666799997779999771119aaa9885555565455677766744444444466666666699997711188888775555565445677777744444444444444444666666611177766777777665545677887744444444444444444466444411165566777876655445678898844444444444444444444444411144566778876554455678999844444444444444444444444411144456789876544555678aaa966664444444444444444444411144456789876544445578aaa99776664444444444444444441115445679a8765444445889aaa7777766666666444444444441116544679a87655444457899aa7777777777776666666666661115444578887765455556789aa777777777777777777779977111444456777665545555568aaa777777777777777777799977111444445665554444444468aaa777777777777777777999977111444445654444444444468999","tl":"444444444444444444444444444444444444444444444444444444444444444444444444444444444445555544444444444444444444444444444446444444444444445555544444444444444444444444444444446444444444444445444444444444444444444444444444444446444444444444445444444444444555544444444454455444446666644444444445444444444444444444444444454455444445444444444444445444444444444444444444444454455455555444444444444445444444444444444444444455554455454445555444444444445444444444444444444444444544455454444555555555555554455555554444444444455555544455454444444444444444444444454455665555554454444444455555544444444444444444444454454444444444454444444444444444444444444444444444454454444444444454444444444444444444444444444444444454444444444444444444444444444444444444444444444444554444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444544444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444","tk":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","fix":"000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111110000000000000000000000001000000000000001100000000000000000000000000000000001000000000000001000000000000000000000000000000000001000000000000001000000011111111100000000011111000001000000000000001000000000000000000000000010011000001000000000000001000000000000000000000000010011001111000000000000001000000000000000000000011110011000001111000000000001000000010000000000000000100011000000000000000011111111111110000000000011111100011010000000000000000000000000010000000000010000000011111100000000000000000000000010000000000010000000000000000000000000000000000000010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","bp":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000022w00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008222200000000000000000010000000000000000000000000000000000000000000000000010000000000000000000000080000000000000000000000000010000000000000000000000010000g000000000000000000000000000000000000000000000100004222222222200000000g00000000000000000000000000000000000000000000000000100822222222200000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000008w0000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","bpK":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","bpP":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002222200000000000000000060000000000000000000000000000000000000000000000000060000000000000000000000010000000000000000000000000060000000000000000000000010000300000000000000000000000000000000000000000000010000333333333330000000070000000000000000000000000000000000000000000000000070055555555550000000000000000000000000000000000000070000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000770000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"towns":[{"name":"Clovermead","x":5,"y":5,"ri":0,"pop":137,"dock":null,"houses":[{"x":5,"y":5,"c":0,"r":0,"s":1,"hall":true},{"x":5,"y":6,"c":5,"r":1,"s":1.01,"hall":false},{"x":6,"y":4,"c":0,"r":1,"s":1.06,"hall":false},{"x":4,"y":5,"c":2,"r":1,"s":0.91,"hall":false},{"x":4,"y":4,"c":1,"r":0,"s":0.94,"hall":false},{"x":6,"y":5,"c":6,"r":1,"s":0.88,"hall":false}]},{"name":"Hayford","x":19,"y":11,"ri":0,"pop":130,"dock":null,"houses":[{"x":19,"y":11,"c":0,"r":0,"s":1,"hall":true},{"x":19,"y":12,"c":4,"r":0,"s":1.03,"hall":false},{"x":18,"y":11,"c":0,"r":0,"s":1.04,"hall":false},{"x":19,"y":10,"c":2,"r":1,"s":1.02,"hall":false},{"x":20,"y":10,"c":4,"r":0,"s":0.86,"hall":false},{"x":18,"y":12,"c":4,"r":1,"s":0.88,"hall":false}]},{"name":"Maplewood","x":34,"y":4,"ri":1,"pop":128,"dock":null,"houses":[{"x":34,"y":4,"c":0,"r":0,"s":1,"hall":true},{"x":34,"y":3,"c":6,"r":1,"s":0.86,"hall":false},{"x":33,"y":3,"c":3,"r":1,"s":0.98,"hall":false},{"x":33,"y":4,"c":4,"r":1,"s":1.08,"hall":false},{"x":34,"y":5,"c":4,"r":0,"s":0.95,"hall":false},{"x":33,"y":5,"c":7,"r":0,"s":0.94,"hall":false}]}],"inds":[{"type":"woodlot","x":14,"y":9,"ri":0,"dock":null},{"type":"gravel","x":2,"y":12,"ri":0,"dock":null},{"type":"cement","x":15,"y":3,"ri":0,"dock":null},{"type":"railyard","x":20,"y":3,"ri":0,"dock":null},{"type":"lumber","x":38,"y":11,"ri":1,"dock":null},{"type":"sawmill","x":42,"y":2,"ri":1,"dock":null},{"type":"lumber","x":47,"y":2,"ri":1,"dock":null}],"depot":[[11,10],[11,9],[11,8],[11,7],[11,6],[11,5]],"pdefs":{"shed":{"name":"Fix up the Engine Shed","ri":0,"unlock":"shop","order":0,"phases":[{"label":"Patch the roof and re-ballast the yard","need":{"logs":6,"gravel":4}}],"reward":1500,"note":"Unlocks buying cars at the depot and a bigger yard to build in."},"culvert":{"order":1,"name":"Washed-out Culvert","ri":0,"obstacle":"washout","phases":[{"label":"Fill the washout","need":{"gravel":6}},{"label":"Rebuild the timber trestle","need":{"logs":4}}],"reward":1200,"note":"Reconnects the Cement Works and the next town."},"railyard":{"order":2,"name":"Old Rail Yard Siding","ri":0,"obstacle":"overgrown","phases":[{"label":"Clear the overgrown siding","need":{"gravel":4,"logs":4}}],"reward":600,"note":"Reaches an abandoned stockpile of rails and steel beams."},"bridgeA":{"order":3,"name":"The Ember Bridge","ri":0,"gate":1,"obstacle":"landslide","phases":[{"label":"Clear the landslide","need":{"slabs":4,"beams":2}},{"label":"Lay the bridge deck","need":{"logs":6,"rails":4}}],"reward":3000,"note":"Bridges the gap to Ember Woods."},"sawspur":{"order":4,"name":"Sawmill Spur","ri":1,"obstacle":"washout","phases":[{"label":"Rebuild the embankment","need":{"gravel":6,"slabs":2}}],"reward":1500,"note":"Reaches the Sawmill. Gravel and concrete have to come from Clover Meadows."},"mogul":{"order":5,"name":"Abandoned Siding","ri":1,"obstacle":"overgrown","phases":[{"label":"Relay the rotten siding","need":{"planks":4,"rails":2}}],"reward":500,"note":"An old Shay logging engine and its caboose were left here. Repair the siding and couple to them to recover them."},"camp2":{"order":6,"name":"Upper Camp Line","ri":1,"obstacle":"landslide","phases":[{"label":"Shore up the cutting","need":{"planks":4,"gravel":4}}],"reward":1500,"note":"Reaches the second Lumber Camp."},"tunnelT":{"order":7,"name":"Frostpine Pass Tunnel","ri":1,"gate":3,"obstacle":"landslide","locked":true,"phases":[{"label":"Blast the rockfall","need":{"machinery":2}},{"label":"Line the tunnel","need":{"slabs":8,"beams":4}}],"reward":6000,"note":"Coming in a future update. It needs machinery from beyond the pass."}},"projects":[{"id":"culvert","site":523},{"id":"railyard","site":272},{"id":"bridgeA","site":426},{"id":"sawspur","site":135},{"id":"mogul","site":550},{"id":"camp2","site":448},{"id":"tunnelT","site":496},{"id":"shed","site":368}],"trains":[{"name":"Old Bessie","ab":false,"hp":36,"segs":[{"x":11,"y":9,"p":0,"d":1},{"x":11,"y":10,"p":0,"d":1}],"veh":[{"kind":"eng","e":"shunter","color":"#d9a23a","flip":false,"name":"Old Bessie"}]},{"name":"Parked cars","ab":false,"hp":36,"segs":[{"x":11,"y":5,"p":0,"d":1},{"x":11,"y":6,"p":0,"d":1},{"x":11,"y":7,"p":0,"d":1},{"x":11,"y":8,"p":0,"d":1}],"veh":[{"kind":"car","t":"logcar","c":null,"n":0},{"kind":"car","t":"hopper","c":null,"n":0},{"kind":"car","t":"flatcar","c":null,"n":0}]},{"name":"Scout","ab":false,"hp":36,"segs":[{"x":4,"y":8,"p":1,"d":0},{"x":5,"y":8,"p":1,"d":0}],"veh":[{"kind":"eng","e":"draisine","color":"#e2a22a","flip":false,"name":"Scout"}]},{"name":"Old Timber","ab":true,"hp":36,"segs":[{"x":46,"y":10,"p":1,"d":0},{"x":47,"y":10,"p":1,"d":0},{"x":48,"y":10,"p":1,"d":0}],"veh":[{"kind":"eng","e":"shay","color":"#3d4a3a","flip":false,"name":"Old Timber"},{"kind":"car","t":"caboose","c":null,"n":0}]}],"tables":[{"style":"meadow","name":"Clover Meadows","x0":0,"y0":0,"w":24,"h":16},{"style":"autumn","name":"Ember Woods","x0":27,"y0":0,"w":24,"h":16},{"style":"canyon","name":"Redrock Canyon","x0":0,"y0":19,"w":24,"h":16},{"style":"snow","name":"Frostpine Peaks","x0":27,"y0":19,"w":24,"h":16}]};
 // ---- input ----
 let cvR=null;const cvRect=()=>cvR||(cvR=cv.getBoundingClientRect());
 const ex=e=>{const r=cvRect();return(e.clientX-r.left)*(VWp/(r.width||VWp));},ey=e=>{const r=cvRect();return(e.clientY-r.top)*(VHp/(r.height||VHp));};
@@ -2239,7 +2404,7 @@ function updateClock(){const d=Math.floor(G.time/DAY)+1,h=(G.time%DAY)/DAY*24,hh
 function startGame(fresh){
   closePanel();FOLLOW=null;SEL=null;FX.length=0;P.length=0;rowVer='';BUILT.clear();$('#edBack').classList.add('hidden');
   if(fresh||!load())newGame();
-  for(let ri=0;ri<4;ri++){BAKE[ri]=null;if(G.reg[ri])bakeTable(ri);}
+  BAKE.length=0;for(let ri=0;ri<REGIONS.length;ri++){if(G.reg[ri])bakeTable(ri);}
   bakeFloor();resize();cam.z=clamp(COARSE?1:1.25,minZoom(),4);const cs=G.camStart;cam.x=cs.x;cam.y=cs.y;clampCam();
   dispMoney=G.money;setSpeed(G.speed||1);setTool('select');renderGoal(true);updateClock();updateBadge();save();
   if(fresh!==false||!G.g.welcomed){G.g.welcomed=true;setTimeout(()=>toast('Welcome to the depot. Your railway starts here.','big',3.5),400);}
@@ -2249,7 +2414,7 @@ const safeSave=()=>{if(EDIT)edDraft();else if(!G.playtest)save();};document.addE
 $('#edBack').onclick=()=>{Snd.init();openEditor(LS.get('pj-edit-draft',null));};
 startGame(false);
 requestAnimationFrame(t=>{lastT=t;frame(t);});
-window.__dv=drawVehicle;window.__geo=steamGeo;window.__pj={get G(){return G;},newGameRandom,blankLayout,openEditor,exitEditor,get ED(){return ED;},edSetTool,edDown,edMove,edUp,edClick,serializeLayout,buildFromLayout,validateLayout,placeConsist,edNewJob,edPlaytest,addConsist,serviceTrain,advancePhase,BUILT,tileAtS,trainAt,planTrack,buildPlan,simStep,setTool,select,cam,crossTiles,w2s,tableOf,vehiclePoses,pointBehind,reverseTrain,uncouple,projDeliver,openRegion,clickAt,newGame:()=>startGame(true),selTrain,openContracts,openFleet,closeModal,buyCar,revealAll:()=>{G.seen.fill(1);checkDiscover(false);G.buildVer++;}};
+window.__dv=drawVehicle;window.__geo=steamGeo;window.__pj={get G(){return G;},buildStation,stationAt,moveTable,resizeTable,addTable,deleteTable,connections,get REGIONS(){return REGIONS;},get MW(){return MW;},newGameRandom,blankLayout,openEditor,exitEditor,get ED(){return ED;},edSetTool,edDown,edMove,edUp,edClick,serializeLayout,buildFromLayout,validateLayout,placeConsist,edNewJob,edPlaytest,addConsist,serviceTrain,advancePhase,BUILT,tileAtS,trainAt,planTrack,buildPlan,simStep,setTool,select,cam,crossTiles,w2s,tableOf,vehiclePoses,pointBehind,reverseTrain,uncouple,projDeliver,openRegion,clickAt,newGame:()=>startGame(true),selTrain,openContracts,openFleet,closeModal,buyCar,revealAll:()=>{G.seen.fill(1);checkDiscover(false);G.buildVer++;}};
 })();
 
 </script>
