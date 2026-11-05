@@ -267,6 +267,13 @@ body.editing #top,body.editing #tools,body.editing #goal,body.editing #panel,bod
 .nchip b{font-weight:700}.nchip small{color:var(--muted);font-size:11px}.nchip.ok b{color:#3aa35a}.nchip.part b{color:#d08a18}.nchip.none b{color:#d9534f}.nchip.ok{border-color:rgba(58,163,90,.35)}
 .needrow .cico{width:20px;height:20px}
 @media (max-width:760px){#goal{width:auto}.trk-f span{display:none}#goal{max-height:44%}}
+.dc{display:flex;align-items:center;justify-content:center;gap:14px}
+.dcface{width:150px;height:150px;touch-action:none;cursor:grab;flex:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}.dcface:active{cursor:grabbing}.dcface:focus-visible{outline:2px solid var(--accent);border-radius:50%}
+.dcside{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:76px}
+.dcled{display:flex;align-items:center;gap:6px;font-family:var(--display);font-weight:600;font-size:12px;color:var(--muted)}.dcled i{width:10px;height:10px;border-radius:50%;background:#2f4a36;box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
+.dcled.on{color:var(--ink)}.dcled.on i{background:#4ce07a;box-shadow:0 0 8px #4ce07a}.dcled.rev i{background:#4a2f2b}.dcled.rev.on i{background:#ff6a50;box-shadow:0 0 8px #ff6a50}
+.dcspd{display:flex;align-items:baseline;gap:3px;background:#1c1a17;color:#9ff0b0;border-radius:8px;padding:4px 10px;font-family:ui-monospace,monospace}.dcspd b{font-size:20px;min-width:26px;text-align:right}.dcspd small{font-size:10px;color:#6aa47a}
+@media (max-width:760px){.dcface{width:118px;height:118px}}
 </style>
 
 <canvas id="c" tabindex="0" aria-label="Model railway tables"></canvas>
@@ -722,6 +729,8 @@ function serviceTrain(t,dt){
 }
 function updateTrain(t,dt){
   if(!hasEng(t)||t.ab){t.v=0;serviceTrain(t,dt);return;}
+  if(t.dial!=null){const e=t.veh.find(v=>v.kind==='eng'),cur=e.flip?-1:1,mag=Math.abs(t.dial),want=mag<.06?0:Math.sign(t.dial);t.turning=false;
+    if(want&&want!==cur){if(t.v<.5)reverseTrain(t);else t.turning=true;t.thr=0;}else t.thr=want?Math.min(1,(mag-.06)/.94):0;}
   let pull=0,spd=1e9,acc=0,n=0;for(const v of t.veh)if(v.kind==='eng'){const E=ENGINES[v.e];pull+=E.pull;spd=Math.min(spd,E.speed);acc+=E.accel;n++;}acc/=n;
   const cars=t.veh.filter(v=>v.kind==='car');t.pull=pull;t.heavy=cars.length>pull;
   let lf=0;for(const c of cars)lf+=c.n/CARS[c.t].cap;lf=cars.length?lf/cars.length:0;
@@ -1119,7 +1128,7 @@ function render(t,rdt){
   if(NIGHT>0){ctx.fillStyle=`rgba(16,24,60,${NIGHT*.55})`;ctx.fillRect(0,0,cv.width,cv.height);worldTf();ctx.globalCompositeOperation='lighter';
     for(const tw of G.towns){if(!RV(tw.ri))continue;for(const h of tw.houses){if(h.x<x0||h.x>x1||h.y<y0||h.y>y1||!G.seen[idx(h.x,h.y)])continue;if(hash(h.x,h.y,11)<.3&&!h.hall)continue;ctx.globalAlpha=NIGHT*.65;const z=G.h[idx(h.x,h.y)]*LIFT;ctx.drawImage(GLOW_W,h.x*TS+H-20,h.y*TS+H-z-28,40,40);}}
     ctx.globalAlpha=NIGHT*.7;for(const o of[...G.inds,...G.towns]){if(!o.seen||!o.dock)continue;const m=o.dock[1],z=(G.tl[idx(...m)]||0)*LIFT;ctx.drawImage(GLOW_W,m[0]*TS+H-22,m[1]*TS+H-z-40,44,44);}
-    for(const tr of G.trains){if(tr.ab)continue;for(const ep of poseCache.get(tr.id)){if(ep.v.kind!=='eng')continue;const fa=ep.sa+(ep.v.flip?Math.PI:0);ctx.save();ctx.translate(ep.x+Math.cos(fa)*(ep.L/2+20),ep.y-ep.z-6+Math.sin(fa)*(ep.L/2+20));ctx.rotate(fa);ctx.globalAlpha=NIGHT*.9;ctx.drawImage(GLOW_H,-26,-14,52,28);ctx.restore();}}
+    for(const tr of G.trains){if(tr.ab)continue;const ep=poseCache.get(tr.id)[0];if(!ep||ep.v.kind!=='eng')continue;const d=ep.L/2+27;ctx.save();ctx.translate(ep.x+Math.cos(ep.a)*d,ep.y-ep.z-4+Math.sin(ep.a)*d);ctx.rotate(ep.sa);ctx.globalAlpha=NIGHT*.9;ctx.drawImage(GLOW_H,-26,-13,52,26);ctx.restore();}
     ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
   drawLabels(rdt);
 }
@@ -1759,8 +1768,9 @@ function statusOf(t){
   if(t.ab)return['Abandoned. Repair its siding, then drive an engine into it to recover it.','idle'];
   if(!hasEng(t))return['Parked. Push an engine into these cars to couple them.','idle'];
   if(t.heavy)return[`Too heavy: this engine can only pull ${t.pull} car${t.pull===1?'':'s'}. Cut some off.`,'bad'];
+  if(t.turning)return['Slowing down to change direction…','warn'];
   if(t.v<.5&&t.svcMsg)return[t.svcMsg,/needs|nothing|full|takes|buys/.test(t.svcMsg)?'warn':''];
-  if(t.v<.5&&t.thr>0&&t.look&&t.look.dead)return['End of the line. Reverse to go back.','warn'];
+  if(t.v<.5&&t.thr>0&&t.look&&t.look.dead)return['End of the line. Turn the knob the other way to back out.','warn'];
   if(t.v<.5&&t.brk)return['Brakes on','idle'];
   if(t.v<.5)return[t.thr>0?'Starting…':'Stopped. Raise the throttle to move.','idle'];
   return[`${Math.round(t.v)} mph${t.grade>0?' · climbing':t.grade<0?' · downhill':''}`,''];
@@ -1774,16 +1784,41 @@ function trainPanel(t){
   const e=t.veh.find(v=>v.kind==='eng'),E=e?ENGINES[e.e]:null,drive=e&&!t.ab;
   return`<div class="ph"><div class="grow"><div class="ttl">${esc(t.ab?'Abandoned '+t.name:t.name)}</div><div class="sub">${E?esc(E.desc)+(E.pull?` Pulls ${E.pull} cars.`:''):'Uncoupled rolling stock'}</div></div><button class="x" data-a="close" aria-label="Close">✕</button></div>
   <div class="status"><span class="dot" id="pdot"></span><span id="pst"></span></div>
-  ${drive?`<div class="drive"><div class="dirrow"><button class="btn" data-a="rev">⇄ Reverse</button><span id="pdir"></span></div>
-    <div class="throttle"><input type="range" min="0" max="100" step="5" id="thr" aria-label="Throttle"><b id="thrv">0%</b></div>
+  ${drive?`<div class="drive"><div class="dc">${dcDial()}<div class="dcside"><div class="dcled" id="ledF"><i></i>Forward</div><div class="dcspd"><b id="dcSpd">0</b><small>mph</small></div><div class="dcled rev" id="ledR"><i></i>Reverse</div></div></div>
     <div class="row"><button class="btn grow" data-a="brk">Brake</button><button class="btn" data-a="horn">Horn</button><button class="btn" data-a="follow">Follow</button></div></div>`:''}
   <div class="sect">Consist<span>${drive?'✂ to uncouple':''}</span></div><div class="cons" id="pcons"></div>
-  ${drive?`<p class="tip">${COARSE?'':'Keys: W/S throttle, R reverse, hold B to brake, H horn. '}Stop under a crane to load or unload. Push into cars to couple.</p>`:''}`;
+  ${drive?`<p class="tip">${COARSE?'Turn the knob right for forward, left for reverse. ':'Turn the knob, or use W/S. R flips direction, hold B to brake, H horn. '}Stop under a crane to load or unload. Push into cars to couple.</p>`:''}`;
+}
+let DIALDRAG=false;
+function dcDial(){
+  let ticks='';for(let k=0;k<=20;k++){const a=(-135+k*13.5)*Math.PI/180,big=k%5===0,r0=big?44:47,r1=52;ticks+=`<line x1="${(Math.sin(a)*r0).toFixed(1)}" y1="${(-Math.cos(a)*r0).toFixed(1)}" x2="${(Math.sin(a)*r1).toFixed(1)}" y2="${(-Math.cos(a)*r1).toFixed(1)}" stroke="#3a332a" stroke-width="${big?1.6:.9}"/>`;}
+  const arc=(a0,a1,r)=>{const p=a=>[(Math.sin(a*Math.PI/180)*r).toFixed(1),(-Math.cos(a*Math.PI/180)*r).toFixed(1)];const[x0,y0]=p(a0),[x1,y1]=p(a1);return`M${x0} ${y0}A${r} ${r} 0 0 1 ${x1} ${y1}`;};
+  let ridges='';for(let k=0;k<28;k++){const a=k/28*Math.PI*2;ridges+=`<line x1="${(Math.sin(a)*27).toFixed(1)}" y1="${(-Math.cos(a)*27).toFixed(1)}" x2="${(Math.sin(a)*31).toFixed(1)}" y2="${(-Math.cos(a)*31).toFixed(1)}" stroke="rgba(255,255,255,.13)" stroke-width="1.6"/>`;}
+  return`<svg class="dcface" viewBox="-62 -62 124 124" role="slider" aria-label="Power controller: left reverse, right forward" tabindex="0">
+    <defs><radialGradient id="dcPlate" cx="35%" cy="30%"><stop offset="0" stop-color="#f7f1e2"/><stop offset="1" stop-color="#cdbf9f"/></radialGradient>
+    <radialGradient id="dcKnobG" cx="38%" cy="32%"><stop offset="0" stop-color="#5a5550"/><stop offset=".55" stop-color="#26231f"/><stop offset="1" stop-color="#0e0d0c"/></radialGradient></defs>
+    <circle r="60" fill="#2b2622"/><circle r="57" fill="url(#dcPlate)"/>
+    <path d="${arc(-135,-5,49.5)}" stroke="#c94c3a" stroke-width="5" fill="none" stroke-linecap="round" opacity=".85"/><path d="${arc(5,135,49.5)}" stroke="#3a9a54" stroke-width="5" fill="none" stroke-linecap="round" opacity=".85"/>
+    ${ticks}<text y="-36" text-anchor="middle" font-size="8.5" font-weight="700" fill="#3a332a">OFF</text>
+    <text x="-38" y="44" text-anchor="middle" font-size="8.5" font-weight="700" fill="#b23a2a">REV</text><text x="38" y="44" text-anchor="middle" font-size="8.5" font-weight="700" fill="#2b7d42">FWD</text>
+    <g id="dcKnob"><circle r="33" fill="rgba(0,0,0,.35)" cy="2.5"/><circle r="32" fill="url(#dcKnobG)"/>${ridges}<circle r="22" fill="url(#dcKnobG)" stroke="rgba(255,255,255,.08)"/>
+      <rect x="-2" y="-30" width="4" height="17" rx="2" fill="#f4efe2"/></g></svg>`;
+}
+function setKnob(v){const k=panel.querySelector('#dcKnob');if(k)k.setAttribute('transform',`rotate(${(v*135).toFixed(1)})`);}
+function setDial(v){const t=selTrain();if(!t)return;const old=t.dial||0;v=clamp(v,-1,1);if(Math.abs(v)<.05)v=0;t.dial=v;t.brk=false;setKnob(v);
+  if(v!==0&&!FOLLOW)FOLLOW=t.id;if((old===0)!==(v===0)||Math.sign(old)!==Math.sign(v))Snd.click();}
+function wireDial(svg){
+  const ang=e=>{const r=svg.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);return Math.atan2(dx,-dy)*180/Math.PI;};
+  let last=0;
+  svg.addEventListener('pointerdown',e=>{e.preventDefault();DIALDRAG=true;try{svg.setPointerCapture(e.pointerId);}catch(_){}const t=selTrain();last=(t&&t.dial||0)*135;const a=ang(e);if(Math.abs(a)<=140){last=clamp(a,-135,135);setDial(last/135);}});
+  svg.addEventListener('pointermove',e=>{if(!DIALDRAG)return;let a=ang(e);if(Math.abs(a)>140)a=last>0?135:-135;last=clamp(a,-135,135);setDial(last/135);});
+  const up=()=>{DIALDRAG=false;};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  svg.addEventListener('wheel',e=>{e.preventDefault();const t=selTrain();if(t)setDial((t.dial||0)-Math.sign(e.deltaY)*.08);},{passive:false});
+  svg.addEventListener('keydown',e=>{const t=selTrain();if(!t)return;if(e.key==='ArrowRight'||e.key==='ArrowUp'){setDial((t.dial||0)+.1);e.preventDefault();e.stopPropagation();}else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){setDial((t.dial||0)-.1);e.preventDefault();e.stopPropagation();}else if(e.key==='0'||e.key==='Home'){setDial(0);e.preventDefault();}});
 }
 function wireTrain(t){
   const q=s=>panel.querySelector(s);q('[data-a=close]').onclick=closePanel;
-  if(q('#thr')){q('#thr').oninput=e=>{const tt=selTrain();if(!tt)return;tt.thr=+e.target.value/100;tt.brk=false;q('#thrv').textContent=e.target.value+'%';if(!FOLLOW&&tt.thr>0)FOLLOW=tt.id;};
-    q('[data-a=rev]').onclick=()=>{const tt=selTrain();if(!tt)return;if(tt.v>1){errToast('Stop the train before reversing.');return;}reverseTrain(tt);tt.thr=0;Snd.click();updatePanel(true);};
+  if(q('#dcKnob')){wireDial(q('.dcface'));
     const b=q('[data-a=brk]'),on=()=>{const tt=selTrain();if(tt){tt.brk=true;tt.thr=0;b.classList.add('held');}},off=()=>{const tt=selTrain();if(tt)tt.brk=false;b.classList.remove('held');};
     b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);
     q('[data-a=horn]').onclick=()=>{const tt=selTrain();if(tt)toot(tt);};
@@ -1816,8 +1851,8 @@ function updatePanel(force){
   const t=selTrain();if(!t){closePanel();return;}
   if(panelSig!=='train'+t.id+':'+t.veh.length+(t.ab?1:0)){buildPanel();return;}
   const q=s=>panel.querySelector(s),[st,cl]=statusOf(t);q('#pst').textContent=st;q('#pdot').className='dot '+cl;
-  if(q('#thr')){if(document.activeElement!==q('#thr')||force){q('#thr').value=Math.round(t.thr*100);q('#thrv').textContent=Math.round(t.thr*100)+'%';}
-    const e=t.veh.find(v=>v.kind==='eng');q('#pdir').textContent=e.flip?'Running backwards':'Running forwards';q('[data-a=follow]').classList.toggle('primary',FOLLOW===t.id);}
+  if(q('#dcKnob')){const e=t.veh.find(v=>v.kind==='eng');if(t.dial==null)t.dial=t.thr*(e.flip?-1:1);if(!DIALDRAG)setKnob(t.dial);
+    const moving=t.v>.5,fwd=!e.flip;q('#ledF').classList.toggle('on',moving&&fwd);q('#ledR').classList.toggle('on',moving&&!fwd);q('#dcSpd').textContent=Math.round(t.v);q('[data-a=follow]').classList.toggle('primary',FOLLOW===t.id);}
   const ch=consHtml(t);if(force||ch!==consSig){consSig=ch;q('#pcons').innerHTML=ch;q('#pcons').querySelectorAll('[data-cut]').forEach(b=>b.onclick=()=>{const tt=selTrain();if(!tt)return;const r=uncouple(tt,+b.dataset.cut);if(r===true){Snd.clunk();toast('Uncoupled','',1.4);buildPanel();}else errToast(r);});}
 }
 
@@ -1862,10 +1897,11 @@ window.addEventListener('keydown',e=>{
   const tlist=['select','track','station','bulldoze','tree','fleet'];if(/^[1-6]$/.test(k)){setTool(tlist[+k-1]);return;}if(k==='j'){openContracts();return;}
   const t=selTrain();
   if(t&&hasEng(t)&&!t.ab){
-    if(k==='w'||k==='arrowup'){t.thr=clamp(t.thr+.1,0,1);t.brk=false;if(!FOLLOW)FOLLOW=t.id;e.preventDefault();updatePanel(true);return;}
-    if(k==='s'||k==='arrowdown'){t.thr=clamp(t.thr-.1,0,1);e.preventDefault();updatePanel(true);return;}
+    if(t.dial==null){const en=t.veh.find(v=>v.kind==='eng');t.dial=t.thr*(en.flip?-1:1);}
+    if(k==='w'||k==='arrowup'){setDial(t.dial+.1);e.preventDefault();return;}
+    if(k==='s'||k==='arrowdown'){setDial(t.dial-.1);e.preventDefault();return;}
     if(k==='b'){t.brk=true;t.thr=0;updatePanel(true);return;}
-    if(k==='r'){if(t.v<1){reverseTrain(t);t.thr=0;Snd.click();updatePanel(true);}else errToast('Stop the train before reversing.');return;}
+    if(k==='r'){setDial(-t.dial);return;}
     if(k==='h'){toot(t);return;}if(k==='f'){FOLLOW=FOLLOW===t.id?null:t.id;return;}}
   keys.add(k);
 });
