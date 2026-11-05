@@ -274,6 +274,11 @@ body.editing #top,body.editing #tools,body.editing #goal,body.editing #panel,bod
 .dcled.on{color:var(--ink)}.dcled.on i{background:#4ce07a;box-shadow:0 0 8px #4ce07a}.dcled.rev i{background:#4a2f2b}.dcled.rev.on i{background:#ff6a50;box-shadow:0 0 8px #ff6a50}
 .dcspd{display:flex;align-items:baseline;gap:3px;background:#1c1a17;color:#9ff0b0;border-radius:8px;padding:4px 10px;font-family:ui-monospace,monospace}.dcspd b{font-size:20px;min-width:26px;text-align:right}.dcspd small{font-size:10px;color:#6aa47a}
 @media (max-width:760px){.dcface{width:118px;height:118px}}
+.tbcars{display:flex;flex-direction:column;gap:4px}.tbcar{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:9px;background:var(--panel2);font-size:12.5px}
+.tbcar .sw{width:10px;height:10px;border-radius:3px;flex:none}.tbcar b{font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tbcar small{color:var(--muted);font-size:11px}
+.tbcar select{width:auto!important;max-width:110px;padding:2px 4px!important;font-size:12px!important}.tbcar.eng{background:var(--panel);border:1px solid var(--line)}
+.tbadd{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.tbadd .btn{padding:4px 8px;font-size:12px}.tbprev{margin-top:8px;border-radius:10px;background:linear-gradient(#cfe0b8,#b9d29c);min-height:54px;display:grid;place-items:center;overflow:hidden}
+#edOpts #esAddEng{margin-top:2px}
 </style>
 
 <canvas id="c" tabindex="0" aria-label="Model railway tables"></canvas>
@@ -1858,7 +1863,7 @@ function updatePanel(force){
 
 // ---- input ----
 function hoverHit(tp){if(!inMap(tp.x,tp.y))return false;if(EDIT)return ED.tool==='select'&&(G.own[idx(tp.x,tp.y)]!==-1||!!trainAt(tp));const i=idx(tp.x,tp.y);if(!G.seen[i])return false;if(G.own[i]!==-1||DOCK.has(i)||G.bp[i])return true;const m=G.track[i];if(m&&pieceCount(m)>1)return true;return!!trainAt(tp);}
-function trainAt(tp){let best=null,bd=COARSE?30:18;const sy=tp.wy-(inMap(tp.x,tp.y)?lev(tp.x,tp.y):0)*LIFT;for(const t of G.trains)for(const p of vehiclePoses(t)){const tx=Math.floor(p.x/TS),ty=Math.floor(p.y/TS);if(!inMap(tx,ty)||!G.seen[idx(tx,ty)])continue;const d=Math.hypot(p.x-tp.wx,(p.y-p.z-5)-sy);if(d<bd){bd=d;best=t;}}return best;}
+function trainAt(tp){let best=null,bd=COARSE?30:18;const sy=tp.wy-(inMap(tp.x,tp.y)?lev(tp.x,tp.y):0)*LIFT;for(const t of G.trains)for(const p of vehiclePoses(t)){const tx=Math.floor(p.x/TS),ty=Math.floor(p.y/TS);if(!inMap(tx,ty)||!G.seen[idx(tx,ty)])continue;const ca=Math.cos(p.a),sn=Math.sin(p.a),dx=tp.wx-p.x,dy=sy-(p.y-p.z-5),u=clamp(dx*ca+dy*sn,-p.L/2,p.L/2),d=Math.hypot(dx-u*ca,dy-u*sn)*.9;if(d<bd){bd=d;best=t;}}return best;}
 function clickAt(tp){if(EDIT){edClick(tp);return;}
   const tr=trainAt(tp);if(tr){Snd.click();if(tr.veh.some(v=>v.kind==='eng'&&v.e==='shunter'))G.g.met=true;select('train',tr.id);renderGoal();return;}
   if(!inMap(tp.x,tp.y)){closePanel();return;}const i=idx(tp.x,tp.y);
@@ -2067,12 +2072,12 @@ const ED_TOOLS=[
   ['Land',[['raise','Raise','M4 18l6-8 4 5 2-3 4 6zM12 3v5M9.5 5.5L12 3l2.5 2.5'],['lower','Lower','M4 18l6-8 4 5 2-3 4 6zM12 8V3M9.5 5.5L12 8l2.5-2.5'],['flatten','Flatten','M3 15h18M5 11h14M8 7h8'],['smooth','Smooth','M3 15c4-6 6 4 9-2s5 2 9-3'],['water','Water','M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z'],['land','Dry land','M3 18h18M6 18l3-7 3 4 3-6 3 9'],['trees','Trees','M12 22v-5M12 2l6 8h-3l4 6H5l4-6H6z'],['rocks','Rocks','M4 18l3-7 5-3 5 4 3 6z']]],
   ['Tables',[['tables','Tables','M3 6h8v6H3zM13 6h8v6h-8zM3 14h8v6H3zM13 14h8v6h-8z']]],
   ['Rail',[['track','Main line','M8 3v18M16 3v18M5 6.5h14M5 12h14M5 17.5h14'],['blueprint','Blueprint','M8 3v18M16 3v18M5 6.5h3M16 6.5h3M5 12h3M16 12h3M5 17.5h3M16 17.5h3'],['station','Station','M3 10l9-6 9 6M5 10v10h14V10M10 20v-5h4v5'],['site','Job site','M6 21V4M6 4h11l-2 4 2 4H6'],['erase','Erase','M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13']]],
-  ['Places',[['town','Town','M3 10l9-6 9 6M5 10v10h14V10M10 20v-5h4v5'],['industry','Industry','M3 21V9l6 4V9l6 4V5h6v16z'],['depot','Depot','M3 10l9-6 9 6v11H3zM8 21v-7h8v7'],['train','Rolling stock','M5 3h14v13H5zM5 9.5h14M8 20l-2 2M16 20l2 2']]],
+  ['Places',[['town','Town','M3 10l9-6 9 6M5 10v10h14V10M10 20v-5h4v5'],['industry','Industry','M3 21V9l6 4V9l6 4V5h6v16z'],['depot','Depot','M3 10l9-6 9 6v11H3zM8 21v-7h8v7'],['train','Trains & cars','M5 3h14v13H5zM5 9.5h14M8 20l-2 2M16 20l2 2']]],
 ];
 const ED_HELP={tables:'Drag a table to move it, or drag its edges to resize it. Rename, restyle, add or remove tables in the panel.',station:'Click straight track beside a town or industry to pre-build its station. Click a station to remove it. Players can build their own in the game.',pan:'Drag to move around. Scroll or pinch to zoom.',select:'Click towns, industries, trains or jobs to edit them.',raise:'Drag to raise the ground one level.',lower:'Drag to lower the ground one level.',flatten:'Drag to level the ground to where you started.',smooth:'Drag to soften hills and valleys.',
   water:'Paint rivers and lakes.',land:'Paint water back into dry land.',trees:'Paint trees that suit the table.',rocks:'Paint rocks. Use Erase to clear trees and rocks.',
   track:'Drag to lay fixed main line. It climbs one level per tile, bridges low ground and tunnels hills. Drag across the gap between tables for a bridge.',blueprint:'Drag to draw broken track that a job rebuilds. Choose the job first.',site:'Click where trains deliver this job’s materials. Put it beside real track.',
-  erase:'Drag to remove track, blueprints and trees. Click a town, industry, train or the depot to delete it.',town:'Click to place a town. Players build its station themselves.',industry:'Click to place a 2×2 industry. Players build its loading station themselves.',depot:'Click to place the 6-tile engine shed siding.',train:'Click track to place rolling stock. Click a train again to turn it around.'};
+  erase:'Drag to remove track, blueprints and trees. Click a town, industry, train or the depot to delete it.',town:'Click to place a town. Players build its station themselves.',industry:'Click to place a 2×2 industry. Players build its loading station themselves.',depot:'Click to place the 6-tile engine shed siding.',train:'Build a train below, then click track to place it. Click a train on the map to edit it.'};
 const TOWN_NAMES=['Clovermead','Hayford','Buttercup Green','Maplewood','Acorn Hollow','Ember Glen','Sunmesa','Coyote Flats','Dustwell','Frostholm','Pinecrest','Snowbell','Thistledown','Larkspur','Millbrook','Oakhurst'];
 const E_=(e,name)=>({kind:'eng',e,color:ENGINES[e].color,flip:false,name});
 const PRESETS={shunter:{label:'Old Bessie (yard switcher)',veh:()=>[{kind:'eng',e:'shunter',color:ENGINES.shunter.color,flip:false,name:'Old Bessie'}]},
@@ -2085,12 +2090,29 @@ const PRESETS={shunter:{label:'Old Bessie (yard switcher)',veh:()=>[{kind:'eng',
   cars3:{label:'Log car, hopper, flatcar',veh:()=>[{kind:'car',t:'logcar',c:null,n:0},{kind:'car',t:'hopper',c:null,n:0},{kind:'car',t:'flatcar',c:null,n:0}]},
   logcar:{label:'Log car',veh:()=>[{kind:'car',t:'logcar',c:null,n:0}]},hopper:{label:'Hopper',veh:()=>[{kind:'car',t:'hopper',c:null,n:0}]},flatcar:{label:'Flatcar',veh:()=>[{kind:'car',t:'flatcar',c:null,n:0}]}};
 let ED=null;
+const ENG_NAMES={shunter:'Old Bessie',draisine:'Scout',mogul:'Ironside',american:'Lady Liberty',consol:'Mountain King',shay:'Old Timber',geep:'Big Joe'};
+const vehOf=b=>[...(b.eng?[{kind:'eng',e:b.eng,color:ENGINES[b.eng].color,flip:false,name:b.name||ENG_NAMES[b.eng]||ENGINES[b.eng].name}]:[]),...b.cars.map(c=>({kind:'car',t:c.t,c:c.c||null,n:c.c?CARS[c.t].cap:0}))];
+function renameTrain(t){const e=t.veh.find(v=>v.kind==='eng');t.name=e?e.name:'Parked cars';}
+function stockRows(veh,a){return veh.map((v,i)=>v.kind==='eng'?`<div class="tbcar eng"><span class="sw" style="background:${v.color}"></span><b>${esc(v.name)}</b><small>${ENGINES[v.e].name}</small><button class="mini-x" data-${a}rm="${i}" aria-label="Remove">✕</button></div>`
+  :`<div class="tbcar"><span class="sw" style="background:${CARS[v.t].col}"></span><b>${CARS[v.t].name}</b>${CARS[v.t].cargo.length?`<select data-${a}load="${i}" aria-label="Load"><option value="">empty</option>${CARS[v.t].cargo.map(g=>`<option value="${g}" ${v.c===g?'selected':''}>${CARGO[g].short||CARGO[g].name} ×${CARS[v.t].cap}</option>`).join('')}</select>`:'<small>crew lookout</small>'}<button class="mini-x" data-${a}rm="${i}" aria-label="Remove">✕</button></div>`).join('');}
+function stockThumb(veh){const w=232,h=54,d=Math.min(2,window.devicePixelRatio||1),c=document.createElement('canvas');c.width=w*d;c.height=h*d;c.style.width=w+'px';c.style.height=h+'px';
+  if(!veh.length)return c;const x=c.getContext('2d');x.scale(d,d);const total=veh.reduce((a,v,i)=>a+vlen(v)+(i?GAP:0),0),sc=Math.min(2.2,(w-12)/total);x.translate(w/2,h*.72);
+  x.fillStyle='#8a7a60';x.fillRect(-w/2,-1,w,2.5);drawTrainPreview(x,veh,sc);return c;}
+function reseatTrain(t,veh){
+  if(!veh.length){G.trains=G.trains.filter(q=>q!==t);return true;}
+  const old={veh:t.veh,segs:t.segs};const len=veh.reduce((a,v,k)=>a+vlen(v)+(k?GAP:0),0),segs=[t.segs[0]];let cover=t.hp;const seen=new Set([segs[0].x+','+segs[0].y+','+segs[0].p]);
+  while(cover<len+TS&&segs.length<80){const pv=prevs(segs[segs.length-1]);const n=pv.find(q=>!seen.has(q.x+','+q.y+','+q.p));if(!n)break;seen.add(n.x+','+n.y+','+n.p);segs.push(n);cover+=PLEN[n.p];}
+  if(cover<len+1)return'There isn’t enough track behind this train for that.';
+  t.veh=veh;t.segs=segs;trimSegs(t);
+  const mine=vehiclePoses(t);for(const o of G.trains){if(o===t)continue;for(const q of vehiclePoses(o))for(const r of mine)if(Math.hypot(q.x-r.x,q.y-r.y)<(q.L+r.L)/2+2){t.veh=old.veh;t.segs=old.segs;return'Another train is in the way.';}}
+  renameTrain(t);if(!hasEng(t))t.ab=false;return true;
+}
 function edEl(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
 function openEditor(L){
   closePanel();closeModal();FOLLOW=null;SEL=null;P.length=0;FX.length=0;BUILT.clear();
   if(!L)L=LS.get('pj-edit-draft',null)||activeLayout()||blankLayout();
   buildFromLayout(L);G.seen.fill(1);for(const o of[...G.towns,...G.inds,...G.projects])o.seen=true;G.speed=0;
-  EDIT=ED={tool:'pan',r:0,side:2,indType:'woodlot',preset:'shunter',proj:G.projects.length?0:-1,townSize:120,name:L.name,issues:[],dirty:new Set(),sel:null,lastBake:0};
+  EDIT=ED={build:{eng:'shunter',name:'Old Bessie',cars:[],ab:false},tool:'pan',r:0,side:2,indType:'woodlot',preset:'shunter',proj:G.projects.length?0:-1,townSize:120,name:L.name,issues:[],dirty:new Set(),sel:null,lastBake:0};
   document.body.classList.add('editing');rowVer='';
   BAKE.length=0;for(let ri=0;ri<REGIONS.length;ri++){bakeTable(ri);}bakeFloor();resize();
   if(!document.getElementById('edRoot'))buildEdUI();$('#edRoot').classList.remove('hidden');$('#edName').value=ED.name;
@@ -2123,14 +2145,27 @@ function edOpts(){
   if(t==='town')h+=`<div class="sect">Name</div><input id="edTown" value="${esc(nextTownName())}"><div class="sect">Size</div><div class="seg2">${[[120,'Hamlet'],[300,'Village'],[700,'Town']].map(([v,n])=>`<button data-size="${v}" class="${ED.townSize===v?'on':''}">${n}</button>`).join('')}</div>`;
   if(t==='industry')h+=`<div class="sect">Type</div><select id="edInd">${Object.keys(IND).map(k=>`<option value="${k}" ${ED.indType===k?'selected':''}>${IND[k].name}</option>`).join('')}</select><p class="tip">${esc(IND[ED.indType].desc)}</p>`;
   if(t==='depot')h+=`<div class="sect">Direction</div><div class="seg2">${[[2,'East–west'],[0,'North–south']].map(([v,n])=>`<button data-side="${v}" class="${(ED.side===2||ED.side===3?2:0)===v?'on':''}">${n}</button>`).join('')}</div>`;
-  if(t==='train')h+=`<div class="sect">Stock</div><select id="edPreset">${Object.keys(PRESETS).map(k=>`<option value="${k}" ${ED.preset===k?'selected':''}>${PRESETS[k].label}</option>`).join('')}</select>`;
+  if(t==='train'){const b=ED.build;h+=`<div class="sect">Engine</div><select id="tbEng"><option value="">None, just cars</option>${Object.keys(ENGINES).map(k=>`<option value="${k}" ${b.eng===k?'selected':''}>${ENGINES[k].name}</option>`).join('')}</select>
+    ${b.eng?`<input id="tbName" value="${esc(b.name)}" aria-label="Engine name" style="margin-top:5px">`:''}
+    <div class="sect">Cars<span>${b.cars.length}</span></div><div class="tbcars">${stockRows(b.cars.map(c=>({kind:'car',t:c.t,c:c.c,n:c.c?CARS[c.t].cap:0})),'b')||'<p class="tip" style="margin:0">No cars yet.</p>'}</div>
+    <div class="tbadd">${Object.keys(CARS).map(k=>`<button class="btn" data-baddcar="${k}">+ ${CARS[k].name}</button>`).join('')}</div>
+    <label class="chk"><input type="checkbox" id="tbAb" ${b.ab?'checked':''}> Abandoned: players recover it by coupling an engine</label>
+    <div class="tbprev" id="tbPrev"></div>
+    <div class="sect">Quick picks</div><select id="edPreset"><option value="">Choose a ready-made train…</option>${Object.keys(PRESETS).map(k=>`<option value="${k}">${PRESETS[k].label}</option>`).join('')}</select>`;}
   if(t==='select')h+=edSelHtml();
   o.innerHTML=h;
   o.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ED.r=+b.dataset.r;edOpts();});
   o.querySelectorAll('[data-gap]').forEach(b=>b.onclick=()=>{ED.gapKind=b.dataset.gap;edOpts();});if(t==='tables')wireTables(o);
   o.querySelectorAll('[data-side]').forEach(b=>b.onclick=()=>{ED.side=+b.dataset.side;edOpts();});
   o.querySelectorAll('[data-size]').forEach(b=>b.onclick=()=>{ED.townSize=+b.dataset.size;edOpts();});
-  const q=s=>o.querySelector(s);if(q('#edProj'))q('#edProj').onchange=e=>{ED.proj=+e.target.value;};if(q('#edInd'))q('#edInd').onchange=e=>{ED.indType=e.target.value;edOpts();};if(q('#edPreset'))q('#edPreset').onchange=e=>{ED.preset=e.target.value;};
+  const q=s=>o.querySelector(s);if(q('#edProj'))q('#edProj').onchange=e=>{ED.proj=+e.target.value;};if(q('#edInd'))q('#edInd').onchange=e=>{ED.indType=e.target.value;edOpts();};if(q('#edPreset'))q('#edPreset').onchange=e=>{const P_=PRESETS[e.target.value];if(!P_)return;const veh=P_.veh(),en=veh.find(v=>v.kind==='eng');ED.build={eng:en?en.e:'',name:en?en.name:'',ab:!!P_.ab,cars:veh.filter(v=>v.kind==='car').map(v=>({t:v.t,c:v.c||null}))};edOpts();};
+  if(t==='train'){const b=ED.build;
+    q('#tbEng').onchange=e=>{b.eng=e.target.value;b.name=b.eng?(ENG_NAMES[b.eng]||ENGINES[b.eng].name):'';edOpts();};if(q('#tbName'))q('#tbName').oninput=e=>{b.name=e.target.value;};
+    q('#tbAb').onchange=e=>{b.ab=e.target.checked;};
+    o.querySelectorAll('[data-baddcar]').forEach(x=>x.onclick=()=>{if(vehOf(b).length>=8){errToast('Trains can have up to 8 vehicles here.');return;}b.cars.push({t:x.dataset.baddcar,c:null});edOpts();});
+    o.querySelectorAll('[data-bload]').forEach(x=>x.onchange=()=>{b.cars[+x.dataset.bload].c=x.value||null;edOpts();});
+    o.querySelectorAll('[data-brm]').forEach(x=>x.onclick=()=>{b.cars.splice(+x.dataset.brm,1);edOpts();});
+    q('#tbPrev').appendChild(stockThumb(vehOf(b)));}
   o.querySelectorAll('[data-a=newjob]').forEach(b=>b.onclick=()=>{edNewJob();edOpts();openJobsEditor(G.projects.length-1);});o.querySelectorAll('[data-a=jobs]').forEach(b=>b.onclick=()=>openJobsEditor(ED.proj));
   edWireSel(o);
 }
@@ -2139,13 +2174,22 @@ function nextTownName(){const used=new Set(G.towns.map(t=>t.name));return TOWN_N
 function edSelHtml(){const s=ED.sel;if(!s)return'<p class="tip">Nothing selected.</p>';
   if(s.k==='town'){const t=G.towns[s.i];if(!t)return'';return`<div class="sect">Town</div><input id="esName" value="${esc(t.name)}"><div class="sect">Size</div><div class="seg2">${[[120,'Hamlet'],[300,'Village'],[700,'Town']].map(([v,n])=>`<button data-tsize="${v}" class="${Math.abs(t.pop-v)<60?'on':''}">${n}</button>`).join('')}</div><div class="row"><button class="btn danger" data-del="town">Delete town</button></div>`;}
   if(s.k==='ind'){const o=G.inds[s.i];if(!o)return'';return`<div class="sect">${esc(o.name)}</div><p class="tip">${esc(IND[o.type].desc)}</p><div class="row"><button class="btn danger" data-del="ind">Delete</button></div>`;}
-  if(s.k==='train'){const t=G.trains.find(q=>q.id===s.id);if(!t)return'';const e=t.veh.find(v=>v.kind==='eng');return`<div class="sect">Rolling stock</div>${e?`<input id="esName" value="${esc(e.name)}">`:''}<p class="tip">${esc(consistText(t))}</p><label class="chk"><input type="checkbox" id="esAb" ${t.ab?'checked':''}> Abandoned (recover by coupling)</label><div class="row"><button class="btn" data-a="flip">Turn around</button><button class="btn danger" data-del="train">Delete</button></div>`;}
+  if(s.k==='train'){const t=G.trains.find(q=>q.id===s.id);if(!t)return'';const e=t.veh.find(v=>v.kind==='eng');return`<div class="sect">Train</div>${e?`<input id="esName" value="${esc(e.name)}" aria-label="Engine name">`:''}
+    <div class="tbcars">${stockRows(t.veh,'s')}</div><div class="tbadd">${Object.keys(CARS).map(k=>`<button class="btn" data-saddcar="${k}">+ ${CARS[k].name}</button>`).join('')}</div>
+    <select id="esAddEng"><option value="">+ Add an engine at the front…</option>${Object.keys(ENGINES).map(k=>`<option value="${k}">${ENGINES[k].name}</option>`).join('')}</select><div class="tbprev" id="esPrev"></div><label class="chk"><input type="checkbox" id="esAb" ${t.ab?'checked':''}> Abandoned (recover by coupling)</label><div class="row"><button class="btn" data-a="flip">Turn around</button><button class="btn danger" data-del="train">Delete</button></div>`;}
   if(s.k==='proj'){const p=G.projects[s.i];return p?`<div class="sect">${esc(projDef(p).name)}</div><div class="row"><button class="btn" data-a="jobs">Edit job</button></div>`:'';}
   return'';}
 function edWireSel(o){const s=ED.sel;if(!s)return;const q=x=>o.querySelector(x);
   if(q('#esName'))q('#esName').oninput=e=>{if(s.k==='town'){G.towns[s.i].name=e.target.value;}else if(s.k==='train'){const t=G.trains.find(z=>z.id===s.id),en=t&&t.veh.find(v=>v.kind==='eng');if(en){en.name=e.target.value;t.name=t.ab?'Abandoned '+en.name:en.name;}}};
   o.querySelectorAll('[data-tsize]').forEach(b=>b.onclick=()=>{edResizeTown(s.i,+b.dataset.tsize);edOpts();});
-  if(q('#esAb'))q('#esAb').onchange=e=>{const t=G.trains.find(z=>z.id===s.id);if(t)t.ab=e.target.checked;};
+  if(q('#esAb'))q('#esAb').onchange=e=>{const t=G.trains.find(z=>z.id===s.id);if(t){t.ab=e.target.checked;renameTrain(t);}};
+  if(s.k==='train'){const t=G.trains.find(z=>z.id===s.id);if(t){
+    const change=veh=>{const r=reseatTrain(t,veh);if(r!==true)errToast(r);else{edDraft();if(!G.trains.includes(t))ED.sel=null;}edOpts();};
+    o.querySelectorAll('[data-saddcar]').forEach(x=>x.onclick=()=>{if(t.veh.length>=8){errToast('Trains can have up to 8 vehicles here.');return;}change([...t.veh,{kind:'car',t:x.dataset.saddcar,c:null,n:0}]);});
+    o.querySelectorAll('[data-sload]').forEach(x=>x.onchange=()=>{const v=t.veh[+x.dataset.sload];v.c=x.value||null;v.n=v.c?CARS[v.t].cap:0;edDraft();edOpts();});
+    o.querySelectorAll('[data-srm]').forEach(x=>x.onclick=()=>{const veh=t.veh.slice();veh.splice(+x.dataset.srm,1);change(veh);});
+    q('#esAddEng').onchange=e=>{const k=e.target.value;if(!k)return;if(t.veh.length>=8){errToast('Trains can have up to 8 vehicles here.');edOpts();return;}change([{kind:'eng',e:k,color:ENGINES[k].color,flip:false,name:ENG_NAMES[k]||ENGINES[k].name},...t.veh]);};
+    const pv=q('#esPrev');if(pv)pv.appendChild(stockThumb(t.veh));}}
   if(q('[data-a=flip]'))q('[data-a=flip]').onclick=()=>{const t=G.trains.find(z=>z.id===s.id);if(t)reverseTrain(t);};
   o.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const k=b.dataset.del;if(k==='town')edDelTown(s.i);else if(k==='ind')edDelInd(s.i);else G.trains=G.trains.filter(t=>t.id!==s.id);ED.sel=null;edOpts();edDraft();});
   if(q('[data-a=jobs]'))q('[data-a=jobs]').onclick=()=>openJobsEditor(s.i);
@@ -2265,7 +2309,7 @@ function edDown(tp){const t=ED.tool;
   let r=null;
   if(t==='town')r=edPlaceTown(tp);else if(t==='industry')r=edPlaceInd(tp);else if(t==='depot')r=edPlaceDepot(tp);
   else if(t==='site'){const p=G.projects[ED.proj];if(!p)r='Make a job first.';else if(!inTable(tp.x,tp.y))r='Put the site on a table.';else{p.site=idx(tp.x,tp.y);r=true;}}
-  else if(t==='train'){const tr=trainAt(tp);if(tr){reverseTrain(tr);r=true;}else{const P_=PRESETS[ED.preset],veh=P_.veh(),e=veh.find(v=>v.kind==='eng');const res=placeConsist(tp.x,tp.y,veh,P_.ab,e?(P_.ab?'Abandoned '+e.name:e.name):'Parked cars');r=typeof res==='string'?res:true;}}
+  else if(t==='train'){const tr=trainAt(tp);if(tr){ED.sel={k:'train',id:tr.id};edSetTool('select');Snd.click();return;}const veh=vehOf(ED.build);if(!veh.length)r='Add an engine or a car first.';else{const e=veh.find(v=>v.kind==='eng');const res=placeConsist(tp.x,tp.y,veh,ED.build.ab,e?e.name:'Parked cars');r=typeof res==='string'?res:true;if(r===true)renameTrain(res);}}
   if(typeof r==='string')errToast(r);else if(r){Snd.build(1);edDraft();}
 }
 function edMove(tp){if(!TD)return;const t=ED.tool;
